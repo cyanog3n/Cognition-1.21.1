@@ -2,14 +2,10 @@ package com.cyanogen.experienceobelisk.registries;
 
 import com.cyanogen.experienceobelisk.ExperienceObelisk;
 import com.cyanogen.experienceobelisk.item.*;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
-import net.minecraft.client.renderer.item.ItemProperties;
+import com.jcraft.jorbis.Block;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.*;
@@ -19,7 +15,6 @@ import net.minecraftforge.common.ForgeMod;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class RegisterItems {
@@ -79,168 +74,120 @@ public class RegisterItems {
             () -> new HoeItem(COGNITIVE_TIER, cognitiveToolProperties()));
 
     public static final DeferredHolder<Item, ArmorItem> COGNITIVE_HELMET = ITEMS.register("cognitive_helmet",
-            () -> new ArmorItem(COGNITIVE_ARMOR_MATERIAL, ArmorItem.Type.HELMET, new Item.Properties()));
+            () -> new ArmorItem(RegisterTiers.COGNITIVE_ARMOR_MATERIAL, ArmorItem.Type.HELMET, cognitiveArmorProperties().durability(280)));
 
     public static final DeferredHolder<Item, ArmorItem> COGNITIVE_CHESTPLATE = ITEMS.register("cognitive_chestplate",
-            () -> new ArmorItem(COGNITIVE_ARMOR_MATERIAL, ArmorItem.Type.CHESTPLATE, new Item.Properties()){
-                @Override
-                public @NotNull Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(@NotNull EquipmentSlot slot) {
-                    return addRangeAttributeModifier(super.getDefaultAttributeModifiers(slot), slot, EquipmentSlot.CHEST, CHEST_RANGE);
-                }
-            });
+            () -> new ArmorItem(RegisterTiers.COGNITIVE_ARMOR_MATERIAL, ArmorItem.Type.CHESTPLATE, cognitiveArmorProperties().durability(420)));
 
     public static final DeferredHolder<Item, ArmorItem> COGNITIVE_LEGGINGS = ITEMS.register("cognitive_leggings",
-            () -> new ArmorItem(COGNITIVE_ARMOR_MATERIAL, ArmorItem.Type.LEGGINGS, new Item.Properties()){
-                @Override
-                public @NotNull Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(@NotNull EquipmentSlot slot) {
-                    return addRangeAttributeModifier(super.getDefaultAttributeModifiers(slot), slot, EquipmentSlot.LEGS, LEGS_RANGE);
-                }
-            });
+            () -> new ArmorItem(RegisterTiers.COGNITIVE_ARMOR_MATERIAL, ArmorItem.Type.LEGGINGS, cognitiveArmorProperties().durability(370)));
 
     public static final DeferredHolder<Item, ArmorItem> COGNITIVE_BOOTS = ITEMS.register("cognitive_boots",
-            () -> new ArmorItem(COGNITIVE_ARMOR_MATERIAL, ArmorItem.Type.BOOTS, new Item.Properties()){
-                @Override
-                public @NotNull Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(@NotNull EquipmentSlot slot) {
-                    return addRangeAttributeModifier(super.getDefaultAttributeModifiers(slot), slot, EquipmentSlot.FEET, FEET_RANGE);
-                }
-            });
+            () -> new ArmorItem(RegisterTiers.COGNITIVE_ARMOR_MATERIAL, ArmorItem.Type.BOOTS, cognitiveArmorProperties().durability(250)));
 
     public static final DeferredHolder<Item, FishingRodItem> COGNITIVE_ROD = ITEMS.register("cognitive_rod",
-            () -> new FishingRodItem(new Item.Properties().defaultDurability(2200)){
-                @Override
-                public int getEnchantmentValue() {
-                    return 15;
-                }
-
-                @Override
-                public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
-                    return addRangeAttributeModifier(super.getDefaultAttributeModifiers(slot), slot, EquipmentSlot.MAINHAND, HANDHELD_RANGE);
-                }
-            });
+            () -> new FishingRodItem(cognitiveToolProperties().durability(2200)));
 
     public static final DeferredHolder<Item, ShearsItem> COGNITIVE_SHEARS = ITEMS.register("cognitive_shears",
-            () -> new ShearsItem(new Item.Properties().defaultDurability(2200)){
-
-                @Override
-                public int getEnchantmentValue(ItemStack stack) {
-                    return 15;
-                }
-
-                @Override
-                public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
-                    return addRangeAttributeModifier(super.getDefaultAttributeModifiers(slot), slot, EquipmentSlot.MAINHAND, HANDHELD_RANGE);
-                }
-            });
-
-    public static Multimap<Attribute, AttributeModifier> addRangeAttributeModifier(Multimap<Attribute, AttributeModifier> attributeMap,
-                                                                                   EquipmentSlot slot, EquipmentSlot validSlot, AttributeModifier modifier){
-
-        ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-        builder.putAll(attributeMap);
-        if(slot.equals(validSlot) && !attributeMap.containsValue(modifier)){
-            builder.put(ForgeMod.BLOCK_REACH.get(), modifier);
-            builder.put(ForgeMod.ENTITY_REACH.get(), modifier);
-        }
-        return builder.build();
-    }
+            () -> new ShearsItem(cognitiveToolProperties().durability(2200)));
 
     //-----FUNCTIONAL ITEMS-----//
 
-    public static final DeferredHolder<Item> ATTUNEMENT_STAFF = ITEMS.register("attunement_staff",
+    public static final DeferredHolder<Item, AttunementStaffItem> ATTUNEMENT_STAFF = ITEMS.register("attunement_staff",
             () -> new AttunementStaffItem(new Item.Properties()));
 
-    public static final DeferredHolder<Item> ENLIGHTENED_AMULET = ITEMS.register("enlightened_amulet",
+    public static final DeferredHolder<Item, EnlightenedAmuletItem> ENLIGHTENED_AMULET = ITEMS.register("enlightened_amulet",
             () -> new EnlightenedAmuletItem(new Item.Properties()));
 
-    public static final DeferredHolder<BucketItem> COGNITIUM_BUCKET = ITEMS.register("cognitium_bucket",
+    public static final DeferredHolder<Item, BucketItem> COGNITIUM_BUCKET = ITEMS.register("cognitium_bucket",
             () -> new BucketItem(RegisterFluids.COGNITIUM, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
 
-    public static final DeferredHolder<Item> NIGHTMARE_BOTTLE = ITEMS.register("nightmare_bottle",
+    public static final DeferredHolder<Item, BottleNightmareItem> NIGHTMARE_BOTTLE = ITEMS.register("nightmare_bottle",
             () -> new BottleNightmareItem(new Item.Properties().stacksTo(64)));
 
-    public static final DeferredHolder<Item> DAYDREAM_BOTTLE = ITEMS.register("daydream_bottle",
+    public static final DeferredHolder<Item, BottleDaydreamItem> DAYDREAM_BOTTLE = ITEMS.register("daydream_bottle",
             () -> new BottleDaydreamItem(new Item.Properties().stacksTo(64)));
 
-    public static final DeferredHolder<Item> BIBLIOPHAGE = ITEMS.register("bibliophage",
+    public static final DeferredHolder<Item, BibliophageItem> BIBLIOPHAGE = ITEMS.register("bibliophage",
             () -> new BibliophageItem(new Item.Properties()));
 
-    public static final DeferredHolder<Item> EXPERIENCE_JELLY = ITEMS.register("experience_jelly",
-            () -> new ExperienceJellyItem(new Item.Properties()));
+    public static final DeferredHolder<Item, FluorescentJellyItem> FLUORESCENT_JELLY = ITEMS.register("fluorescent_jelly",
+            () -> new FluorescentJellyItem(new Item.Properties()));
 
-    public static final DeferredHolder<Item> MENDING_NEUROGEL = ITEMS.register("mending_neurogel",
+    public static final DeferredHolder<Item, NeurogelMendingItem> MENDING_NEUROGEL = ITEMS.register("mending_neurogel",
             () -> new NeurogelMendingItem(new Item.Properties()));
 
-    public static final DeferredHolder<Item> POSEIDON_FLASK = ITEMS.register("flask_of_poseidon",
+    public static final DeferredHolder<Item, FlaskPoseidonItem> POSEIDON_FLASK = ITEMS.register("flask_of_poseidon",
             () -> new FlaskPoseidonItem(new Item.Properties()));
 
-    public static final DeferredHolder<Item> HADES_FLASK = ITEMS.register("flask_of_hades",
+    public static final DeferredHolder<Item, FlaskHadesItem> HADES_FLASK = ITEMS.register("flask_of_hades",
             () -> new FlaskHadesItem(new Item.Properties()));
 
-    public static final DeferredHolder<Item> CHAOS_FLASK = ITEMS.register("flask_of_chaos",
+    public static final DeferredHolder<Item, FlaskChaosItem> CHAOS_FLASK = ITEMS.register("flask_of_chaos",
             () -> new FlaskChaosItem(new Item.Properties()));
 
-    public static final DeferredHolder<Item> TRANSFORMING_FOCUS = ITEMS.register("transforming_focus",
+    public static final DeferredHolder<Item, TransformingFocusItem> TRANSFORMING_FOCUS = ITEMS.register("transforming_focus",
             () -> new TransformingFocusItem(new Item.Properties()));
 
     //-----FUNCTIONAL BLOCK ITEMS-----//
 
-    public static final DeferredHolder<Item> EXPERIENCE_OBELISK_ITEM = ITEMS.register("experience_obelisk",
+    public static final DeferredHolder<Item, ExperienceObeliskItem> EXPERIENCE_OBELISK_ITEM = ITEMS.register("experience_obelisk",
             () -> new ExperienceObeliskItem(RegisterBlocks.EXPERIENCE_OBELISK.get(), new Item.Properties()));
 
-    public static final DeferredHolder<Item> EXPERIENCE_FOUNTAIN_ITEM = ITEMS.register("experience_fountain",
+    public static final DeferredHolder<Item, ExperienceFountainItem> EXPERIENCE_FOUNTAIN_ITEM = ITEMS.register("experience_fountain",
             () -> new ExperienceFountainItem(RegisterBlocks.EXPERIENCE_FOUNTAIN.get(), new Item.Properties()));
 
-    public static final DeferredHolder<Item> PRECISION_DISPELLER_ITEM = ITEMS.register("precision_dispeller",
+    public static final DeferredHolder<Item, PrecisionDispellerItem> PRECISION_DISPELLER_ITEM = ITEMS.register("precision_dispeller",
             () -> new PrecisionDispellerItem(RegisterBlocks.PRECISION_DISPELLER.get(), new Item.Properties()));
 
-    public static final DeferredHolder<Item> MOLECULAR_METAMORPHER_ITEM = ITEMS.register("molecular_metamorpher",
+    public static final DeferredHolder<Item, MolecularMetamorpherItem> MOLECULAR_METAMORPHER_ITEM = ITEMS.register("molecular_metamorpher",
             () -> new MolecularMetamorpherItem(RegisterBlocks.MOLECULAR_METAMORPHER.get(), new Item.Properties()));
 
-    public static final DeferredHolder<Item> ACCELERATOR_ITEM = ITEMS.register("accelerator",
+    public static final DeferredHolder<Item, BlockItem> ACCELERATOR_ITEM = ITEMS.register("accelerator",
             () -> new BlockItem(RegisterBlocks.ACCELERATOR.get(), new Item.Properties()));
 
-    public static final DeferredHolder<Item> LINEAR_ACCELERATOR_ITEM = ITEMS.register("linear_accelerator",
+    public static final DeferredHolder<Item, BlockItem> LINEAR_ACCELERATOR_ITEM = ITEMS.register("linear_accelerator",
             () -> new BlockItem(RegisterBlocks.LINEAR_ACCELERATOR.get(), new Item.Properties()));
 
-    public static final DeferredHolder<Item> ENCHANTED_BOOKSHELF_ITEM = ITEMS.register("enchanted_bookshelf",
+    public static final DeferredHolder<Item, BlockItem> ENCHANTED_BOOKSHELF_ITEM = ITEMS.register("enchanted_bookshelf",
             () -> new BlockItem(RegisterBlocks.ENCHANTED_BOOKSHELF.get(), new Item.Properties()));
 
-    public static final DeferredHolder<Item> ARCHIVERS_BOOKSHELF_ITEM = ITEMS.register("archivers_bookshelf",
+    public static final DeferredHolder<Item, BlockItem> ARCHIVERS_BOOKSHELF_ITEM = ITEMS.register("archivers_bookshelf",
             () -> new BlockItem(RegisterBlocks.ARCHIVERS_BOOKSHELF.get(), new Item.Properties()));
 
-    public static final DeferredHolder<Item> INFECTED_BOOKSHELF_ITEM = ITEMS.register("infected_bookshelf",
+    public static final DeferredHolder<Item, BlockItem> INFECTED_BOOKSHELF_ITEM = ITEMS.register("infected_bookshelf",
             () -> new BlockItem(RegisterBlocks.INFECTED_BOOKSHELF.get(), new Item.Properties()));
 
-    public static final DeferredHolder<Item> INFECTED_ENCHANTED_BOOKSHELF_ITEM = ITEMS.register("infected_enchanted_bookshelf",
+    public static final DeferredHolder<Item, BlockItem> INFECTED_ENCHANTED_BOOKSHELF_ITEM = ITEMS.register("infected_enchanted_bookshelf",
             () -> new BlockItem(RegisterBlocks.INFECTED_ENCHANTED_BOOKSHELF.get(), new Item.Properties()));
 
-    public static final DeferredHolder<Item> INFECTED_ARCHIVERS_BOOKSHELF_ITEM = ITEMS.register("infected_archivers_bookshelf",
+    public static final DeferredHolder<Item, BlockItem> INFECTED_ARCHIVERS_BOOKSHELF_ITEM = ITEMS.register("infected_archivers_bookshelf",
             () -> new BlockItem(RegisterBlocks.INFECTED_ARCHIVERS_BOOKSHELF.get(), new Item.Properties()));
 
-    public static final DeferredHolder<Item> FLUORESCENT_AGAR_ITEM = ITEMS.register("fluorescent_agar",
+    public static final DeferredHolder<Item, BlockItem> FLUORESCENT_AGAR_ITEM = ITEMS.register("fluorescent_agar",
             () -> new BlockItem(RegisterBlocks.FLUORESCENT_AGAR.get(), new Item.Properties()));
 
-    public static final DeferredHolder<Item> NUTRIENT_AGAR_ITEM = ITEMS.register("nutrient_agar",
+    public static final DeferredHolder<Item, BlockItem> NUTRIENT_AGAR_ITEM = ITEMS.register("nutrient_agar",
             () -> new BlockItem(RegisterBlocks.NUTRIENT_AGAR.get(), new Item.Properties()));
 
-    public static final DeferredHolder<Item> INSIGHTFUL_AGAR_ITEM = ITEMS.register("insightful_agar",
+    public static final DeferredHolder<Item, BlockItem> INSIGHTFUL_AGAR_ITEM = ITEMS.register("insightful_agar",
             () -> new BlockItem(RegisterBlocks.INSIGHTFUL_AGAR.get(), new Item.Properties()));
 
-    public static final DeferredHolder<Item> EXTRAVAGANT_AGAR_ITEM = ITEMS.register("extravagant_agar",
+    public static final DeferredHolder<Item, BlockItem> EXTRAVAGANT_AGAR_ITEM = ITEMS.register("extravagant_agar",
             () -> new BlockItem(RegisterBlocks.EXTRAVAGANT_AGAR.get(), new Item.Properties()));
 
     //-----BLOCK ITEMS-----//
 
-    public static final DeferredHolder<Item> COGNITIVE_ALLOY_BLOCK_ITEM = ITEMS.register("cognitive_alloy_block",
+    public static final DeferredHolder<Item, BlockItem> COGNITIVE_ALLOY_BLOCK_ITEM = ITEMS.register("cognitive_alloy_block",
             () -> new BlockItem(RegisterBlocks.COGNITIVE_ALLOY_BLOCK.get(), new Item.Properties()));
 
-    public static final DeferredHolder<Item> COGNITIVE_CRYSTAL_BLOCK_ITEM = ITEMS.register("cognitive_crystal_block",
+    public static final DeferredHolder<Item, BlockItem> COGNITIVE_CRYSTAL_BLOCK_ITEM = ITEMS.register("cognitive_crystal_block",
             () -> new BlockItem(RegisterBlocks.COGNITIVE_CRYSTAL_BLOCK.get(), new Item.Properties()));
 
-    public static final DeferredHolder<Item> WHISPERGLASS_ITEM = ITEMS.register("whisperglass",
+    public static final DeferredHolder<Item, BlockItem> WHISPERGLASS_ITEM = ITEMS.register("whisperglass",
             () -> new BlockItem(RegisterBlocks.WHISPERGLASS_BLOCK.get(), new Item.Properties()));
 
-    public static final DeferredHolder<Item> FORGOTTEN_DUST_BLOCK_ITEM = ITEMS.register("forgotten_dust_block",
+    public static final DeferredHolder<Item, BlockItem> FORGOTTEN_DUST_BLOCK_ITEM = ITEMS.register("forgotten_dust_block",
             () -> new BlockItem(RegisterBlocks.FORGOTTEN_DUST_BLOCK.get(), new Item.Properties()){
                 @Override
                 public int getBurnTime(ItemStack itemStack, @Nullable RecipeType<?> recipeType) {
@@ -250,8 +197,7 @@ public class RegisterItems {
 
     //-----DUMMY ITEM-----//
 
-    public static final DeferredHolder<Item> DUMMY_SWORD = ITEMS.register("dummy_sword", RegisterItems::baseItem);
-
+    public static final DeferredHolder<Item, Item> DUMMY_SWORD = ITEMS.register("dummy_sword", RegisterItems::baseItem);
 
     public static void register(IEventBus eventBus){
         ITEMS.register(eventBus);

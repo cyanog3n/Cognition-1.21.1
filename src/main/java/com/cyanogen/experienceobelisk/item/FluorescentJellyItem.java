@@ -13,9 +13,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-public class ExperienceJellyItem extends Item {
+public class FluorescentJellyItem extends Item {
 
-    public ExperienceJellyItem(Properties properties) {
+    public FluorescentJellyItem(Properties properties) {
         super(properties);
     }
 

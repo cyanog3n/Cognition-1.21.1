@@ -1,7 +1,6 @@
 package com.cyanogen.experienceobelisk.registries;
 
 import com.cyanogen.experienceobelisk.ExperienceObelisk;
-import com.mojang.serialization.RecordBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -15,6 +14,7 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +54,12 @@ public class RegisterTiers {
     };
 
     public static Map<ArmorItem.Type, Integer> getCognitiveDefenseForSlot(){
-
+        HashMap<ArmorItem.Type, Integer> map = new HashMap<>();
+        map.put(ArmorItem.Type.HELMET, 3);
+        map.put(ArmorItem.Type.CHESTPLATE, 7);
+        map.put(ArmorItem.Type.LEGGINGS, 6);
+        map.put(ArmorItem.Type.BOOTS, 2);
+        return map;
     }
 
     public static ArmorMaterial COGNITIVE = new ArmorMaterial(
@@ -62,13 +67,11 @@ public class RegisterTiers {
             15,
             SoundEvents.ARMOR_EQUIP_NETHERITE,
             () -> COGNITIVE_TIER.getRepairIngredient(),
-            List.of(new ArmorMaterial.Layer(ResourceLocation.withDefaultNamespace("cognitive"))),
+            List.of(new ArmorMaterial.Layer(ResourceLocation.withDefaultNamespace("cognitive"))), //todo: check how 1.21.1 handles armor layers
             1.0f,
             0);
 
     public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS = DeferredRegister.create(BuiltInRegistries.ARMOR_MATERIAL, ExperienceObelisk.MOD_ID);
     public static final DeferredHolder<ArmorMaterial, ArmorMaterial> COGNITIVE_ARMOR_MATERIAL = ARMOR_MATERIALS.register("cognitive", () -> COGNITIVE);
-
-
 
 }
