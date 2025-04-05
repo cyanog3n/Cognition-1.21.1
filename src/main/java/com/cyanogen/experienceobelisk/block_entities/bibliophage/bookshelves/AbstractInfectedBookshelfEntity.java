@@ -6,6 +6,7 @@ import com.cyanogen.experienceobelisk.config.Config;
 import com.cyanogen.experienceobelisk.registries.RegisterBlocks;
 import com.cyanogen.experienceobelisk.registries.RegisterItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -197,10 +198,11 @@ public abstract class AbstractInfectedBookshelfEntity extends AbstractInfectiveE
 
     //-----------NBT-----------//
 
+
     @Override
-    public void load(CompoundTag tag)
-    {
-        super.load(tag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+
+        super.loadAdditional(tag, registries);
 
         this.decayValue = tag.getInt("DecayValue");
         this.timeTillSpawn = tag.getInt("SpawnDelay");
@@ -208,9 +210,9 @@ public abstract class AbstractInfectedBookshelfEntity extends AbstractInfectiveE
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag)
-    {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+
+        super.saveAdditional(tag, registries);
 
         tag.putInt("DecayValue", decayValue);
         tag.putInt("SpawnDelay", timeTillSpawn);
@@ -218,9 +220,9 @@ public abstract class AbstractInfectedBookshelfEntity extends AbstractInfectiveE
     }
 
     @Override
-    public CompoundTag getUpdateTag()
-    {
-        CompoundTag tag = super.getUpdateTag();
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+
+        CompoundTag tag = super.getUpdateTag(registries);
 
         tag.putInt("DecayValue", decayValue);
         tag.putInt("SpawnDelay", timeTillSpawn);
@@ -233,7 +235,5 @@ public abstract class AbstractInfectedBookshelfEntity extends AbstractInfectiveE
     {
         return ClientboundBlockEntityDataPacket.create(this);
     }
-
-
 
 }
