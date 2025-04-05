@@ -2,7 +2,6 @@ package com.cyanogen.experienceobelisk.registries;
 
 import com.cyanogen.experienceobelisk.ExperienceObelisk;
 import com.cyanogen.experienceobelisk.item.*;
-import com.jcraft.jorbis.Block;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlotGroup;
@@ -11,7 +10,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraftforge.common.ForgeMod;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -100,7 +98,7 @@ public class RegisterItems {
             () -> new EnlightenedAmuletItem(new Item.Properties()));
 
     public static final DeferredHolder<Item, BucketItem> COGNITIUM_BUCKET = ITEMS.register("cognitium_bucket",
-            () -> new BucketItem(RegisterFluids.COGNITIUM, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
+            () -> new BucketItem(RegisterFluids.COGNITIUM.get(), new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
 
     public static final DeferredHolder<Item, BottleNightmareItem> NIGHTMARE_BOTTLE = ITEMS.register("nightmare_bottle",
             () -> new BottleNightmareItem(new Item.Properties().stacksTo(64)));

@@ -13,8 +13,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class RegisterBlocks {
-    public static final DeferredRegister<Block> BLOCKS =
-            DeferredRegister.create(BuiltInRegistries.BLOCK, ExperienceObelisk.MOD_ID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(BuiltInRegistries.BLOCK, ExperienceObelisk.MOD_ID);
 
     //-----FUNCTIONAL BLOCKS-----//
 
@@ -44,12 +43,11 @@ public class RegisterBlocks {
     //-----FLUID BLOCKS-----//
 
     public static final DeferredHolder<Block, LiquidBlock> COGNITIUM = BLOCKS.register("cognitium",
-            () -> new LiquidBlock(RegisterFluids.COGNITIUM_FLOWING, BlockBehaviour.Properties.ofFullCopy(Blocks.WATER)
+            () -> new LiquidBlock(RegisterFluids.COGNITIUM_FLOWING.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.WATER)
                     .liquid()
                     .lightLevel(value -> 10)
-                    .emissiveRendering((p_61036_, p_61037_, p_61038_) -> true)
+                    .emissiveRendering((state, getter, pos) -> true)
             ));
-
 
     public static void register(IEventBus eventBus){
         BLOCKS.register(eventBus);

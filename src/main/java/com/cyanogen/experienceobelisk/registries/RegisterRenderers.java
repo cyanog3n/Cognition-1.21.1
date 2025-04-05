@@ -5,12 +5,12 @@ import com.cyanogen.experienceobelisk.renderer.ExperienceFountainBlockRenderer;
 import com.cyanogen.experienceobelisk.renderer.ExperienceObeliskBlockRenderer;
 import com.cyanogen.experienceobelisk.renderer.MolecularMetamorpherBlockRenderer;
 import com.cyanogen.experienceobelisk.renderer.PrecisionDispellerBlockRenderer;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
-@Mod.EventBusSubscriber(modid = ExperienceObelisk.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = ExperienceObelisk.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class RegisterRenderers {
 
     @SubscribeEvent

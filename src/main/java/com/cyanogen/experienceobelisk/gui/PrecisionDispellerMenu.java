@@ -38,6 +38,10 @@ public class PrecisionDispellerMenu extends AbstractContainerMenu {
         this.dispellerClient = (PrecisionDispellerEntity) level.getBlockEntity(pos);
     }
 
+    public PrecisionDispellerMenu(int id, Inventory inventory) {
+        this(id, inventory, inventory.player, new BlockPos(0,0,0));
+    }
+
     //-----SLOTS-----//
 
     public PrecisionDispellerMenu(int id, Inventory inventory, Player player, BlockPos pos) {

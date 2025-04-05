@@ -19,7 +19,7 @@ public class ExperienceObeliskMenu extends AbstractContainerMenu {
     Inventory inventory;
 
     public ExperienceObeliskMenu(int id, Inventory inventory, FriendlyByteBuf data) {
-        this(id, null);
+        this(id, data.readBlockPos());
 
         Level level = inventory.player.level();
         this.pos = data.readBlockPos();
@@ -30,6 +30,10 @@ public class ExperienceObeliskMenu extends AbstractContainerMenu {
     public ExperienceObeliskMenu(int id, BlockPos pos) {
         super(RegisterMenus.EXPERIENCE_OBELISK_MENU.get(), id);
         this.posServer = pos;
+    }
+
+    public ExperienceObeliskMenu(int id, Inventory inventory) {
+        this(id, new BlockPos(0,0,0));
     }
 
     @Override

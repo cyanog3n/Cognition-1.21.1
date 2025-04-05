@@ -34,6 +34,10 @@ public class MolecularMetamorpherMenu extends AbstractContainerMenu {
         this.inventory = inventory;
     }
 
+    public MolecularMetamorpherMenu(int id, Inventory inventory) {
+        this(id, inventory, null, null, inventory.player, new BlockPos(0,0,0));
+    }
+
     //-----SLOTS-----//
 
     public MolecularMetamorpherMenu(int id, Inventory inventoryPlayer, IItemHandler inputs, IItemHandler output, Player player, BlockPos pos){
