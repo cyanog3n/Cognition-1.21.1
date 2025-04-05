@@ -121,12 +121,12 @@ public class MolecularMetamorpherBlock extends ExperienceReceivingBlock implemen
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return blockEntityType == RegisterBlockEntities.MOLECULAR_METAMORPHER.get() ? MolecularMetamorpherEntity::tick : null;
+        return blockEntityType == RegisterBlockEntities.MOLECULAR_METAMORPHER_BE.get() ? MolecularMetamorpherEntity::tick : null;
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return RegisterBlockEntities.MOLECULAR_METAMORPHER.get().create(pos, state);
+        return RegisterBlockEntities.MOLECULAR_METAMORPHER_BE.get().create(pos, state);
     }
 }

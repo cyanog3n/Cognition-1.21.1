@@ -19,7 +19,7 @@ import static com.cyanogen.experienceobelisk.block.AcceleratorBlock.ACTIVE;
 public class AcceleratorEntity extends AbstractAcceleratorEntity{
 
     public AcceleratorEntity(BlockPos pos, BlockState state) {
-        super(RegisterBlockEntities.ACCELERATOR.get(), pos, state);
+        super(RegisterBlockEntities.ACCELERATOR_BE.get(), pos, state);
     }
 
     static double orbSpeed = 2.0;

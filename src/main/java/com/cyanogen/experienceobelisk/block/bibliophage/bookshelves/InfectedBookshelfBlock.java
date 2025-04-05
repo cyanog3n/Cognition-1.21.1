@@ -1,7 +1,8 @@
-package com.cyanogen.experienceobelisk.block.bibliophage;
+package com.cyanogen.experienceobelisk.block.bibliophage.bookshelves;
 
-import com.cyanogen.experienceobelisk.block_entities.bibliophage.AbstractInfectedBookshelfEntity;
-import com.cyanogen.experienceobelisk.block_entities.bibliophage.InfectedBookshelfEntity;
+import com.cyanogen.experienceobelisk.block_entities.bibliophage.bookshelves.AbstractInfectedBookshelfEntity;
+import com.cyanogen.experienceobelisk.block_entities.bibliophage.bookshelves.InfectedBookshelfEntity;
+import com.cyanogen.experienceobelisk.config.Config;
 import com.cyanogen.experienceobelisk.registries.RegisterBlockEntities;
 import com.cyanogen.experienceobelisk.registries.RegisterItems;
 import net.minecraft.ChatFormatting;
@@ -13,6 +14,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -39,13 +41,18 @@ public class InfectedBookshelfBlock extends BookshelfBlock implements EntityBloc
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter getter, BlockPos pos, CollisionContext context) {
 
+        VoxelShape shape = super.getCollisionShape(state, getter, pos, context);
+
         if(context instanceof EntityCollisionContext entityCollisionContext){
             Entity e = entityCollisionContext.getEntity();
             if(e instanceof ExperienceOrb){
                 return Shapes.empty();
             }
+            else if(e instanceof ItemEntity item && Config.COMMON.shelvesPermeableToDust.get()){
+                return item.getItem().is(RegisterItems.FORGOTTEN_DUST.get()) ? Shapes.empty() : shape;
+            }
         }
-        return super.getCollisionShape(state, getter, pos, context);
+        return shape;
     }
 
     @Override
@@ -111,12 +118,12 @@ public class InfectedBookshelfBlock extends BookshelfBlock implements EntityBloc
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return blockEntityType == RegisterBlockEntities.INFECTED_BOOKSHELF.get() ? InfectedBookshelfEntity::tick : null;
+        return blockEntityType == RegisterBlockEntities.INFECTED_BOOKSHELF_BE.get() ? InfectedBookshelfEntity::tick : null;
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return RegisterBlockEntities.INFECTED_BOOKSHELF.get().create(pos, state);
+        return RegisterBlockEntities.INFECTED_BOOKSHELF_BE.get().create(pos, state);
     }
 }

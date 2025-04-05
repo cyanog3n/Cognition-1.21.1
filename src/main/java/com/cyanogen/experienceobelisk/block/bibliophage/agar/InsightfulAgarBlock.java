@@ -1,6 +1,6 @@
-package com.cyanogen.experienceobelisk.block.bibliophage;
+package com.cyanogen.experienceobelisk.block.bibliophage.agar;
 
-import com.cyanogen.experienceobelisk.block_entities.bibliophage.InfectedEnchantedBookshelfEntity;
+import com.cyanogen.experienceobelisk.block_entities.bibliophage.agar.InsightfulAgarEntity;
 import com.cyanogen.experienceobelisk.registries.RegisterBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -11,10 +11,10 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-public class InfectedEnchantedBookshelfBlock extends InfectedBookshelfBlock implements EntityBlock {
+public class InsightfulAgarBlock extends AbstractAgarBlock implements EntityBlock {
 
-    public InfectedEnchantedBookshelfBlock() {
-        super(2.0f);
+    public InsightfulAgarBlock() {
+        super(2, true);
     }
 
     //-----BLOCK ENTITY-----//
@@ -22,13 +22,12 @@ public class InfectedEnchantedBookshelfBlock extends InfectedBookshelfBlock impl
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return blockEntityType == RegisterBlockEntities.INFECTED_ENCHANTED_BOOKSHELF.get() ? InfectedEnchantedBookshelfEntity::tick : null;
+        return blockEntityType == RegisterBlockEntities.INSIGHTFUL_AGAR_BE.get() ? InsightfulAgarEntity::tick : null;
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return RegisterBlockEntities.INFECTED_ENCHANTED_BOOKSHELF.get().create(pos, state);
+        return RegisterBlockEntities.INSIGHTFUL_AGAR_BE.get().create(pos, state);
     }
-
 }

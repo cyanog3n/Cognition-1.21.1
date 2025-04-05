@@ -1,6 +1,6 @@
-package com.cyanogen.experienceobelisk.block.bibliophage;
+package com.cyanogen.experienceobelisk.block.bibliophage.bookshelves;
 
-import com.cyanogen.experienceobelisk.block_entities.bibliophage.InfectedArchiversBookshelfEntity;
+import com.cyanogen.experienceobelisk.block_entities.bibliophage.bookshelves.InfectedArchiversBookshelfEntity;
 import com.cyanogen.experienceobelisk.registries.RegisterBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -22,13 +22,13 @@ public class InfectedArchiversBookshelfBlock extends InfectedBookshelfBlock impl
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return blockEntityType == RegisterBlockEntities.INFECTED_ARCHIVERS_BOOKSHELF.get() ? InfectedArchiversBookshelfEntity::tick : null;
+        return blockEntityType == RegisterBlockEntities.INFECTED_ARCHIVERS_BOOKSHELF_BE.get() ? InfectedArchiversBookshelfEntity::tick : null;
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return RegisterBlockEntities.INFECTED_ARCHIVERS_BOOKSHELF.get().create(pos, state);
+        return RegisterBlockEntities.INFECTED_ARCHIVERS_BOOKSHELF_BE.get().create(pos, state);
     }
 
 }

@@ -1,5 +1,7 @@
-package com.cyanogen.experienceobelisk.block_entities.bibliophage;
+package com.cyanogen.experienceobelisk.block_entities.bibliophage.bookshelves;
 
+import com.cyanogen.experienceobelisk.block.bibliophage.agar.InsightfulAgarBlock;
+import com.cyanogen.experienceobelisk.block_entities.bibliophage.AbstractInfectiveEntity;
 import com.cyanogen.experienceobelisk.config.Config;
 import com.cyanogen.experienceobelisk.registries.RegisterBlocks;
 import com.cyanogen.experienceobelisk.registries.RegisterItems;
@@ -40,7 +42,7 @@ public abstract class AbstractInfectedBookshelfEntity extends AbstractInfectiveE
     final int spawns; //the number of times a bookshelf can spawn an orb before decaying
     int decayValue = 0; //the number of times a bookshelf has spawned an orb
     double infectivity = 0.02; //the chance for a bookshelf to infect another adjacent bookshelf every second
-    boolean redstoneEnabled = false; //whether or not the bookshelf is sensitive to redstone. Disabled bookshelves will not infect adjacents, produce XP, or decay
+    boolean redstoneEnabled = false; //whether the bookshelf is sensitive to redstone. Disabled bookshelves will not infect adjacents, produce XP, or decay
 
     //-----------BEHAVIOR-----------//
 
@@ -158,13 +160,13 @@ public abstract class AbstractInfectedBookshelfEntity extends AbstractInfectiveE
     public int countNeighborsOfType(int type, List<BlockPos> neighbors){
 
         Level level = getLevel();
-        Block insightful = RegisterBlocks.INSIGHTFUL_AGAR.get();
+        InsightfulAgarBlock insightful = RegisterBlocks.INSIGHTFUL_AGAR.get();
         Block extravagant = RegisterBlocks.EXTRAVAGANT_AGAR.get();
         int count = 0;
 
         if(type == 1){ //insightful agar
             for(BlockPos pos : neighbors){
-                if(level != null && level.getBlockState(pos).is(insightful)){
+                if(level != null && level.getBlockState(pos).is(RegisterBlocks.INSIGHTFUL_AGAR.get())){
                     count++;
                 }
             }

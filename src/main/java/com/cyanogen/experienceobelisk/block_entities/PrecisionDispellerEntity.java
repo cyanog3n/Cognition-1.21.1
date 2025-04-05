@@ -15,7 +15,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class PrecisionDispellerEntity extends ExperienceReceivingEntity implements GeoBlockEntity{
 
     public PrecisionDispellerEntity(BlockPos pos, BlockState state) {
-        super(RegisterBlockEntities.PRECISION_DISPELLER.get(), pos, state);
+        super(RegisterBlockEntities.PRECISION_DISPELLER_BE.get(), pos, state);
     }
 
     //-----------ANIMATIONS-----------//
