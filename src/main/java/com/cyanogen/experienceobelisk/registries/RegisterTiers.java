@@ -1,15 +1,22 @@
 package com.cyanogen.experienceobelisk.registries;
 
-import net.minecraft.sounds.SoundEvent;
+import com.cyanogen.experienceobelisk.ExperienceObelisk;
+import com.mojang.serialization.RecordBuilder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.List;
+import java.util.Map;
 
 public class RegisterTiers {
 
@@ -46,59 +53,22 @@ public class RegisterTiers {
         }
     };
 
-    public static ArmorMaterial COGNITIVE_ARMOR_MATERIAL = new ArmorMaterial() {
+    public static Map<ArmorItem.Type, Integer> getCognitiveDefenseForSlot(){
 
-        @Override
-        public int getDurabilityForType(ArmorItem.Type type) {
-            return switch (type.getName()){
-                case "helmet" -> 280;
-                case "chestplate" -> 420;
-                case "leggings" -> 370;
-                case "boots" -> 250;
-                default -> 0;
-            };
-        }
+    }
 
-        @Override
-        public int getDefenseForType(ArmorItem.Type type) {
-            return switch (type.getName()){
-                case "helmet" -> 3;
-                case "chestplate" -> 7;
-                case "leggings" -> 6;
-                case "boots" -> 2;
-                default -> 0;
-            };
-        }
+    public static ArmorMaterial COGNITIVE = new ArmorMaterial(
+            getCognitiveDefenseForSlot(),
+            15,
+            SoundEvents.ARMOR_EQUIP_NETHERITE,
+            () -> COGNITIVE_TIER.getRepairIngredient(),
+            List.of(new ArmorMaterial.Layer(ResourceLocation.withDefaultNamespace("cognitive"))),
+            1.0f,
+            0);
 
-        @Override
-        public int getEnchantmentValue() {
-            return 15;
-        }
+    public static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS = DeferredRegister.create(BuiltInRegistries.ARMOR_MATERIAL, ExperienceObelisk.MOD_ID);
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> COGNITIVE_ARMOR_MATERIAL = ARMOR_MATERIALS.register("cognitive", () -> COGNITIVE);
 
-        @Override
-        public SoundEvent getEquipSound() {
-            return SoundEvents.ARMOR_EQUIP_NETHERITE;
-        }
 
-        @Override
-        public Ingredient getRepairIngredient() {
-            return Ingredient.of(RegisterItems.COGNITIVE_ALLOY.get());
-        }
-
-        @Override
-        public String getName() {
-            return "cognitive";
-        }
-
-        @Override
-        public float getToughness() {
-            return 1.0f;
-        }
-
-        @Override
-        public float getKnockbackResistance() {
-            return 0;
-        }
-    };
 
 }
