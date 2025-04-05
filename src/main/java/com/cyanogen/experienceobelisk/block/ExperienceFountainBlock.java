@@ -216,13 +216,13 @@ public class ExperienceFountainBlock extends ExperienceReceivingBlock implements
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return blockEntityType == RegisterBlockEntities.EXPERIENCE_FOUNTAIN_BE.get() ? ExperienceFountainEntity::tick : null;
+        return blockEntityType == RegisterBlockEntities.EXPERIENCE_FOUNTAIN.get() ? ExperienceFountainEntity::tick : null;
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return RegisterBlockEntities.EXPERIENCE_FOUNTAIN_BE.get().create(pos, state);
+        return RegisterBlockEntities.EXPERIENCE_FOUNTAIN.get().create(pos, state);
     }
 
 }

@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class FluorescentAgarEntity extends BlockEntity {
 
     public FluorescentAgarEntity(BlockPos pos, BlockState state) {
-        super(RegisterBlockEntities.FLUORESCENT_AGAR_BE.get(), pos, state);
+        super(RegisterBlockEntities.FLUORESCENT_AGAR.get(), pos, state);
     }
 
     int infectionProgress = 0;

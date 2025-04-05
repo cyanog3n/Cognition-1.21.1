@@ -15,9 +15,9 @@ public class RegisterRenderers {
 
     @SubscribeEvent
     public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
-        event.registerBlockEntityRenderer(RegisterBlockEntities.EXPERIENCE_OBELISK_BE.get(), ExperienceObeliskBlockRenderer::new);
-        event.registerBlockEntityRenderer(RegisterBlockEntities.EXPERIENCE_FOUNTAIN_BE.get(), ExperienceFountainBlockRenderer::new);
-        event.registerBlockEntityRenderer(RegisterBlockEntities.PRECISION_DISPELLER_BE.get(), PrecisionDispellerBlockRenderer::new);
-        event.registerBlockEntityRenderer(RegisterBlockEntities.MOLECULAR_METAMORPHER_BE.get(), MolecularMetamorpherBlockRenderer::new);
+        event.registerBlockEntityRenderer(RegisterBlockEntities.EXPERIENCE_OBELISK.get(), ExperienceObeliskBlockRenderer::new);
+        event.registerBlockEntityRenderer(RegisterBlockEntities.EXPERIENCE_FOUNTAIN.get(), ExperienceFountainBlockRenderer::new);
+        event.registerBlockEntityRenderer(RegisterBlockEntities.PRECISION_DISPELLER.get(), PrecisionDispellerBlockRenderer::new);
+        event.registerBlockEntityRenderer(RegisterBlockEntities.MOLECULAR_METAMORPHER.get(), MolecularMetamorpherBlockRenderer::new);
     }
 }

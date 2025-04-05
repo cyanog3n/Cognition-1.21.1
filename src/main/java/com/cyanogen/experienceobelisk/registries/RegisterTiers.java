@@ -2,14 +2,24 @@ package com.cyanogen.experienceobelisk.registries;
 
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.Block;
 
 public class RegisterTiers {
 
     public static Tier COGNITIVE_TIER = new Tier() {
+
+        @Override
+        public TagKey<Block> getIncorrectBlocksForDrops() {
+            return BlockTags.INCORRECT_FOR_IRON_TOOL;
+        }
+
         @Override
         public int getUses() {
             return 835;
@@ -23,11 +33,6 @@ public class RegisterTiers {
         @Override
         public float getAttackDamageBonus() {
             return 3.0F;
-        }
-
-        @Override
-        public int getLevel() {
-            return 2;
         }
 
         @Override

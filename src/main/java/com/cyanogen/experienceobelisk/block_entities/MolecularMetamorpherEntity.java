@@ -50,7 +50,7 @@ import java.util.Optional;
 public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implements GeoBlockEntity {
 
     public MolecularMetamorpherEntity(BlockPos pos, BlockState state) {
-        super(RegisterBlockEntities.MOLECULAR_METAMORPHER_BE.get(), pos, state);
+        super(RegisterBlockEntities.MOLECULAR_METAMORPHER.get(), pos, state);
     }
 
     boolean isProcessing = false;

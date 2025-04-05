@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 public class ExtravagantAgarBlock extends HalfTransparentBlock implements EntityBlock {
 
     public ExtravagantAgarBlock() {
-        super(Properties.copy(Blocks.SLIME_BLOCK)
+        super(Properties.ofLegacyCopy(Blocks.SLIME_BLOCK)
                 .noOcclusion()
                 .isViewBlocking((state,getter,pos)->false)
                 .emissiveRendering((state,getter,pos)->true));
@@ -55,12 +55,12 @@ public class ExtravagantAgarBlock extends HalfTransparentBlock implements Entity
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return blockEntityType == RegisterBlockEntities.EXTRAVAGANT_AGAR_BE.get() ? ExtravagantAgarEntity::tick : null;
+        return blockEntityType == RegisterBlockEntities.EXTRAVAGANT_AGAR.get() ? ExtravagantAgarEntity::tick : null;
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return RegisterBlockEntities.EXTRAVAGANT_AGAR_BE.get().create(pos, state);
+        return RegisterBlockEntities.EXTRAVAGANT_AGAR.get().create(pos, state);
     }
 }

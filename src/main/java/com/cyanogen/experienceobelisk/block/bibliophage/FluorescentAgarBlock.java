@@ -69,6 +69,6 @@ public class FluorescentAgarBlock extends HalfTransparentBlock implements Entity
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return RegisterBlockEntities.FLUORESCENT_AGAR_BE.get().create(pos, state);
+        return RegisterBlockEntities.FLUORESCENT_AGAR.get().create(pos, state);
     }
 }

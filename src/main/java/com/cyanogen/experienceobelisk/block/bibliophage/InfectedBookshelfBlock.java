@@ -111,12 +111,12 @@ public class InfectedBookshelfBlock extends BookshelfBlock implements EntityBloc
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return blockEntityType == RegisterBlockEntities.INFECTED_BOOKSHELF_BE.get() ? InfectedBookshelfEntity::tick : null;
+        return blockEntityType == RegisterBlockEntities.INFECTED_BOOKSHELF.get() ? InfectedBookshelfEntity::tick : null;
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return RegisterBlockEntities.INFECTED_BOOKSHELF_BE.get().create(pos, state);
+        return RegisterBlockEntities.INFECTED_BOOKSHELF.get().create(pos, state);
     }
 }

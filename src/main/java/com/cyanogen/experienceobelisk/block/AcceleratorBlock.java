@@ -99,12 +99,12 @@ public class AcceleratorBlock extends ExperienceReceivingBlock implements Entity
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return blockEntityType == RegisterBlockEntities.ACCELERATOR_BE.get() ? AcceleratorEntity::tick : null;
+        return blockEntityType == RegisterBlockEntities.ACCELERATOR.get() ? AcceleratorEntity::tick : null;
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return RegisterBlockEntities.ACCELERATOR_BE.get().create(pos, state);
+        return RegisterBlockEntities.ACCELERATOR.get().create(pos, state);
     }
 }

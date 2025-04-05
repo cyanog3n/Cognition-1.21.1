@@ -1,6 +1,7 @@
 package com.cyanogen.experienceobelisk.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class Config {
         public double defaultAmuletRange = 8.0;
         public double defaultBindingRange = 48.0;
 
-        public Common(ForgeConfigSpec.Builder builder){
+        public Common(ModConfigSpec.Builder builder){
 
             defaultAllowedFluids.add("mob_grinding_utils:fluid_xp");
             defaultAllowedFluids.add("cofh_core:experience");
@@ -141,11 +142,11 @@ public class Config {
     }
 
     public static final Common COMMON;
-    public static final ForgeConfigSpec COMMON_SPEC;
+    public static final ModConfigSpec COMMON_SPEC;
 
     static
     {
-        Pair<Common, ForgeConfigSpec> commonSpecPair = new ForgeConfigSpec.Builder().configure(Common::new);
+        Pair<Common, ModConfigSpec> commonSpecPair = new ModConfigSpec.Builder().configure(Common::new);
         COMMON = commonSpecPair.getLeft();
         COMMON_SPEC = commonSpecPair.getRight();
     }

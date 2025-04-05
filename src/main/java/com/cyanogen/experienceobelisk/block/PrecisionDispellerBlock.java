@@ -154,13 +154,13 @@ public class PrecisionDispellerBlock extends ExperienceReceivingBlock implements
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return blockEntityType == RegisterBlockEntities.PRECISION_DISPELLER_BE.get() ? PrecisionDispellerEntity::tick : null;
+        return blockEntityType == RegisterBlockEntities.PRECISION_DISPELLER.get() ? PrecisionDispellerEntity::tick : null;
     }
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return RegisterBlockEntities.PRECISION_DISPELLER_BE.get().create(pos, state);
+        return RegisterBlockEntities.PRECISION_DISPELLER.get().create(pos, state);
     }
 
 
