@@ -4,6 +4,7 @@ import com.cyanogen.experienceobelisk.registries.RegisterBlockEntities;
 import com.cyanogen.experienceobelisk.registries.RegisterBlocks;
 import com.cyanogen.experienceobelisk.registries.RegisterSounds;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -45,23 +46,34 @@ public class FluorescentAgarEntity extends BlockEntity {
     //-----------NBT-----------//
 
     @Override
-    public void load(CompoundTag tag)
-    {
-        super.load(tag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+
+        super.loadAdditional(tag, registries);
+
         this.infectionProgress = tag.getInt("InfectionProgress");
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag)
-    {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+
+        super.saveAdditional(tag, registries);
+
         tag.putInt("InfectionProgress", infectionProgress);
     }
 
     @Override
-    public CompoundTag getUpdateTag()
-    {
-        CompoundTag tag = super.getUpdateTag();
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider lookupProvider) {
+
+        super.handleUpdateTag(tag, lookupProvider);
+
+        this.infectionProgress = tag.getInt("InfectionProgress");
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+
+        CompoundTag tag = super.getUpdateTag(registries);
+
         tag.putInt("InfectionProgress", infectionProgress);
         return tag;
     }

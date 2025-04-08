@@ -220,6 +220,16 @@ public abstract class AbstractInfectedBookshelfEntity extends AbstractInfectiveE
     }
 
     @Override
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider lookupProvider) {
+
+        super.handleUpdateTag(tag, lookupProvider);
+
+        this.decayValue = tag.getInt("DecayValue");
+        this.timeTillSpawn = tag.getInt("SpawnDelay");
+        this.redstoneEnabled = tag.getBoolean("isRedstoneControllable");
+    }
+
+    @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
 
         CompoundTag tag = super.getUpdateTag(registries);

@@ -2,6 +2,7 @@ package com.cyanogen.experienceobelisk.block_entities;
 
 import com.cyanogen.experienceobelisk.registries.RegisterBlockEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
@@ -17,12 +18,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
@@ -30,7 +27,7 @@ import java.util.List;
 public class ExperienceFountainEntity extends ExperienceReceivingEntity implements GeoBlockEntity{
 
     public ExperienceFountainEntity(BlockPos pos, BlockState state) {
-        super(RegisterBlockEntities.EXPERIENCE_FOUNTAIN_BE.get(), pos, state);
+        super(RegisterBlockEntities.EXPERIENCE_FOUNTAIN.get(), pos, state);
     }
 
     //-----------ANIMATIONS-----------//
@@ -220,13 +217,12 @@ public class ExperienceFountainEntity extends ExperienceReceivingEntity implemen
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
+
         CompoundTag tag = pkt.getTag();
-        if(tag != null){
-            this.activityState = tag.getInt("ActivityState");
-            this.hasPlayerAbove = tag.getBoolean("PlayerAbove");
-        }
-        super.onDataPacket(net, pkt);
+        this.activityState = tag.getInt("ActivityState");
+        this.hasPlayerAbove = tag.getBoolean("PlayerAbove");
+        super.onDataPacket(net, pkt, lookupProvider);
     }
 
 }
