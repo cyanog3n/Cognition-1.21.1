@@ -5,9 +5,9 @@ import com.cyanogen.experienceobelisk.gui.ExperienceObeliskMenu;
 import com.cyanogen.experienceobelisk.registries.RegisterBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -31,7 +31,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.network.NetworkHooks;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -68,17 +68,17 @@ public class ExperienceObeliskBlock extends Block implements EntityBlock {
     public ItemStack stack;
 
     @Override
-    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (!level.isClientSide) {
             BlockEntity entity = level.getBlockEntity(pos);
-            if (player.hasCorrectToolForDrops(state) && entity != null) {
+            if (player.hasCorrectToolForDrops(state, level, pos) && entity != null) {
 
                 stack = new ItemStack(state.getBlock(), 1);
-                entity.saveToItem(stack);
+                entity.saveToItem(stack, level.registryAccess());
             }
         }
 
-        super.playerWillDestroy(level, pos, state, player);
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class ExperienceObeliskBlock extends Block implements EntityBlock {
             BlockEntity entity = level.getBlockEntity(pos);
             if(entity != null){
                 stack = new ItemStack(state.getBlock(), 1);
-                entity.saveToItem(stack);
+                entity.saveToItem(stack, level.registryAccess());
             }
         }
 
@@ -108,20 +108,30 @@ public class ExperienceObeliskBlock extends Block implements EntityBlock {
 
     }
 
-    @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
 
+    @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (level.isClientSide) {
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.sidedSuccess(true);
         }
         else {
-            NetworkHooks.openScreen((ServerPlayer) player, state.getMenuProvider(level,pos), pos);
-            return InteractionResult.CONSUME;
+            player.openMenu(getMenuProvider(state, level, pos), pos);
+            return ItemInteractionResult.CONSUME;
         }
-
     }
 
-    @Nullable
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        if (level.isClientSide) {
+            return InteractionResult.sidedSuccess(true);
+        }
+        else {
+            player.openMenu(getMenuProvider(state, level, pos), pos);
+            return InteractionResult.CONSUME;
+        }
+    }
+
+    @NotNull
     @Override
     public MenuProvider getMenuProvider(BlockState state, Level level, BlockPos pos) {
 
@@ -141,7 +151,7 @@ public class ExperienceObeliskBlock extends Block implements EntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return blockEntityType == RegisterBlockEntities.EXPERIENCE_OBELISK_BE.get() ? ExperienceObeliskEntity::tick : null;
+        return blockEntityType == RegisterBlockEntities.EXPERIENCE_OBELISK.get() ? ExperienceObeliskEntity::tick : null;
     }
 
     @Override
@@ -152,7 +162,7 @@ public class ExperienceObeliskBlock extends Block implements EntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return RegisterBlockEntities.EXPERIENCE_OBELISK_BE.get().create(pos, state);
+        return RegisterBlockEntities.EXPERIENCE_OBELISK.get().create(pos, state);
     }
 
 }
