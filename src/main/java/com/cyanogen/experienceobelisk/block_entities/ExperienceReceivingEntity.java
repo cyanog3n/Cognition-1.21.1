@@ -94,9 +94,9 @@ public abstract class ExperienceReceivingEntity extends BlockEntity {
     //-----------NBT-----------//
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
 
-        super.loadAdditional(tag, registries);
+        super.loadAdditional(tag, provider);
 
         this.isBound = tag.getBoolean("isBound");
         this.boundX = tag.getInt("BoundX");
@@ -106,9 +106,9 @@ public abstract class ExperienceReceivingEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
 
-        super.saveAdditional(tag, registries);
+        super.saveAdditional(tag, provider);
 
         tag.putBoolean("isBound", isBound);
         tag.putInt("BoundX", boundX);
@@ -118,9 +118,9 @@ public abstract class ExperienceReceivingEntity extends BlockEntity {
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider lookupProvider) {
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider provider) {
 
-        super.handleUpdateTag(tag, lookupProvider);
+        super.handleUpdateTag(tag, provider);
 
         this.isBound = tag.getBoolean("isBound");
         this.boundX = tag.getInt("BoundX");
@@ -130,9 +130,9 @@ public abstract class ExperienceReceivingEntity extends BlockEntity {
     }
 
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
 
-        CompoundTag tag = super.getUpdateTag(registries);
+        CompoundTag tag = super.getUpdateTag(provider);
 
         tag.putBoolean("isBound", isBound);
         tag.putInt("BoundX", boundX);

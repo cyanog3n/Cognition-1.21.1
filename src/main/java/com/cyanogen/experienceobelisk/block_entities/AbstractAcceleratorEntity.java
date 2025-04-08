@@ -26,33 +26,33 @@ public abstract class AbstractAcceleratorEntity extends BlockEntity {
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
 
-        super.loadAdditional(tag, registries);
+        super.loadAdditional(tag, provider);
 
         this.redstoneEnabled = tag.getBoolean("isRedstoneControllable");
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
 
-        super.saveAdditional(tag, registries);
+        super.saveAdditional(tag, provider);
 
         tag.putBoolean("isRedstoneControllable", redstoneEnabled);
     }
 
     @Override
-    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider lookupProvider) {
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider provider) {
 
-        super.handleUpdateTag(tag, lookupProvider);
+        super.handleUpdateTag(tag, provider);
 
         this.redstoneEnabled = tag.getBoolean("isRedstoneControllable");
     }
 
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
 
-        CompoundTag tag = super.getUpdateTag(registries);
+        CompoundTag tag = super.getUpdateTag(provider);
 
         tag.putBoolean("isRedstoneControllable", redstoneEnabled);
         return tag;

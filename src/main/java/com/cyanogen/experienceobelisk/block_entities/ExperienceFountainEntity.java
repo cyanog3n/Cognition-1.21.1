@@ -188,23 +188,34 @@ public class ExperienceFountainEntity extends ExperienceReceivingEntity implemen
     }
 
     @Override
-    public void load(CompoundTag tag)
-    {
-        super.load(tag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+
+        super.loadAdditional(tag, provider);
+
         this.activityState = tag.getInt("ActivityState");
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag)
-    {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
+
+        super.saveAdditional(tag, provider);
+
         tag.putInt("ActivityState", activityState);
     }
 
     @Override
-    public CompoundTag getUpdateTag()
-    {
-        CompoundTag tag = super.getUpdateTag();
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider provider) {
+
+        super.handleUpdateTag(tag, provider);
+
+        this.activityState = tag.getInt("ActivityState");
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+
+        CompoundTag tag = super.getUpdateTag(provider);
+
         tag.putInt("ActivityState", activityState);
 
         return tag;
@@ -217,12 +228,12 @@ public class ExperienceFountainEntity extends ExperienceReceivingEntity implemen
     }
 
     @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider provider) {
 
         CompoundTag tag = pkt.getTag();
         this.activityState = tag.getInt("ActivityState");
         this.hasPlayerAbove = tag.getBoolean("PlayerAbove");
-        super.onDataPacket(net, pkt, lookupProvider);
+        super.onDataPacket(net, pkt, provider);
     }
 
 }

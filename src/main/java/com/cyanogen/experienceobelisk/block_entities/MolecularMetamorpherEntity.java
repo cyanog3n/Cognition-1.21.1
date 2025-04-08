@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.Packet;
@@ -47,7 +48,7 @@ import java.util.Optional;
 public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implements GeoBlockEntity {
 
     public MolecularMetamorpherEntity(BlockPos pos, BlockState state) {
-        super(RegisterBlockEntities.MOLECULAR_METAMORPHER_BE.get(), pos, state);
+        super(RegisterBlockEntities.MOLECULAR_METAMORPHER.get(), pos, state);
     }
 
     boolean isProcessing = false;
@@ -502,27 +503,27 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
     }
 
     @Override
-    public void load(CompoundTag tag)
-    {
-        super.load(tag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
 
-        inputHandler.deserializeNBT(tag.getCompound("Inputs"));
-        outputHandler.deserializeNBT(tag.getCompound("Outputs"));
+        super.loadAdditional(tag, provider);
+
+        inputHandler.deserializeNBT(provider, tag.getCompound("Inputs"));
+        outputHandler.deserializeNBT(provider, tag.getCompound("Outputs"));
 
         this.isProcessing = tag.getBoolean("IsProcessing");
         this.processTime = tag.getInt("ProcessTime");
         this.processProgress = tag.getInt("ProcessProgress");
-        this.recipeId = new ResourceLocation(tag.getString("RecipeID"));
+        this.recipeId = ResourceLocation.bySeparator(tag.getString("RecipeID"),':');
         this.recipeCost = tag.getInt("RecipeCost");
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag)
-    {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
 
-        tag.put("Inputs", inputHandler.serializeNBT());
-        tag.put("Outputs", outputHandler.serializeNBT());
+        super.saveAdditional(tag, provider);
+
+        tag.put("Inputs", inputHandler.serializeNBT(provider));
+        tag.put("Outputs", outputHandler.serializeNBT(provider));
 
         tag.putBoolean("IsProcessing", isProcessing);
         tag.putInt("ProcessTime", processTime);
@@ -535,12 +536,27 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
     }
 
     @Override
-    public CompoundTag getUpdateTag()
-    {
-        CompoundTag tag = super.getUpdateTag();
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider provider) {
 
-        tag.put("Inputs", inputHandler.serializeNBT());
-        tag.put("Outputs", outputHandler.serializeNBT());
+        super.handleUpdateTag(tag, provider);
+
+        inputHandler.deserializeNBT(provider, tag.getCompound("Inputs"));
+        outputHandler.deserializeNBT(provider, tag.getCompound("Outputs"));
+
+        this.isProcessing = tag.getBoolean("IsProcessing");
+        this.processTime = tag.getInt("ProcessTime");
+        this.processProgress = tag.getInt("ProcessProgress");
+        this.recipeId = ResourceLocation.bySeparator(tag.getString("RecipeID"),':');
+        this.recipeCost = tag.getInt("RecipeCost");
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+
+        CompoundTag tag = super.getUpdateTag(provider);
+
+        tag.put("Inputs", inputHandler.serializeNBT(provider));
+        tag.put("Outputs", outputHandler.serializeNBT(provider));
 
         tag.putBoolean("IsProcessing", isProcessing);
         tag.putInt("ProcessTime", processTime);

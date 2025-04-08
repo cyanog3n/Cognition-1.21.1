@@ -7,6 +7,7 @@ import com.cyanogen.experienceobelisk.registries.RegisterFluids;
 import com.cyanogen.experienceobelisk.registries.RegisterTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -19,21 +20,13 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nonnull;
@@ -46,7 +39,7 @@ import static com.cyanogen.experienceobelisk.utils.ExperienceUtils.xpToLevels;
 public class ExperienceObeliskEntity extends BlockEntity implements GeoBlockEntity{
 
     public ExperienceObeliskEntity(BlockPos pos, BlockState state) {
-        super(RegisterBlockEntities.EXPERIENCE_OBELISK_BE.get(), pos, state);
+        super(RegisterBlockEntities.EXPERIENCE_OBELISK.get(), pos, state);
     }
 
     //-----------ANIMATIONS-----------//
@@ -285,31 +278,41 @@ public class ExperienceObeliskEntity extends BlockEntity implements GeoBlockEnti
     //-----------NBT-----------//
 
     @Override
-    public void load(CompoundTag tag)
-    {
-        super.load(tag);
-        tank.readFromNBT(tag);
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider provider) {
 
+        super.loadAdditional(tag, provider);
+
+        tank.readFromNBT(provider, tag);
         this.radius = tag.getDouble("Radius");
         this.redstoneEnabled = tag.getBoolean("isRedstoneControllable");
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag)
-    {
-        super.saveAdditional(tag);
-        tank.writeToNBT(tag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider provider) {
 
+        super.saveAdditional(tag, provider);
+
+        tank.writeToNBT(provider, tag);
         tag.putDouble("Radius", radius);
         tag.putBoolean("isRedstoneControllable", redstoneEnabled);
     }
 
     @Override
-    public CompoundTag getUpdateTag()
-    {
-        CompoundTag tag = super.getUpdateTag();
-        tank.writeToNBT(tag);
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.Provider provider) {
 
+        super.handleUpdateTag(tag, provider);
+
+        tank.readFromNBT(provider, tag);
+        this.radius = tag.getDouble("Radius");
+        this.redstoneEnabled = tag.getBoolean("isRedstoneControllable");
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+
+        CompoundTag tag = super.getUpdateTag(provider);
+
+        tank.writeToNBT(provider, tag);
         tag.putDouble("Radius", radius);
         tag.putBoolean("isRedstoneControllable", redstoneEnabled);
 
