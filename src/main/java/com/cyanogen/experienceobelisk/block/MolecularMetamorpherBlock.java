@@ -27,8 +27,8 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.network.NetworkHooks;
+import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
 public class MolecularMetamorpherBlock extends ExperienceReceivingBlock implements EntityBlock {
@@ -42,6 +42,11 @@ public class MolecularMetamorpherBlock extends ExperienceReceivingBlock implemen
                 .sound(SoundType.METAL)
                 .requiresCorrectToolForDrops()
         );
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+        return super.useWithoutItem(state, level, pos, player, hitResult);
     }
 
     @Override
@@ -95,14 +100,14 @@ public class MolecularMetamorpherBlock extends ExperienceReceivingBlock implemen
     @Override
     public MenuProvider getMenuProvider(BlockState state, Level level, BlockPos pos) {
 
-        IItemHandler inputHandler = null;
-        IItemHandler outputHandler = null;
+        ItemStackHandler inputHandler = null;
+        ItemStackHandler outputHandler = null;
         if(level.getBlockEntity(pos) instanceof MolecularMetamorpherEntity entity){
             inputHandler = entity.getInputHandler();
-            outputHandler = entity.getOutputHandler();
+            outputHandler = entity.getOutputHandler(); //from metamorpher class
         }
-        final IItemHandler inputs = inputHandler;
-        final IItemHandler output = outputHandler;
+        final ItemStackHandler inputs = inputHandler;
+        final ItemStackHandler output = outputHandler;
 
         return new MenuProvider() {
             @Override
