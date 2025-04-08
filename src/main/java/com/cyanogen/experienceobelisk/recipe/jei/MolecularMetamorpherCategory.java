@@ -4,6 +4,7 @@ import com.cyanogen.experienceobelisk.ExperienceObelisk;
 import com.cyanogen.experienceobelisk.recipe.MolecularMetamorpherRecipe;
 import com.cyanogen.experienceobelisk.registries.RegisterItems;
 import com.cyanogen.experienceobelisk.utils.ExperienceUtils;
+import com.cyanogen.experienceobelisk.utils.RecipeUtils;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
@@ -20,16 +21,17 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Tuple;
+import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import static com.cyanogen.experienceobelisk.utils.RecipeUtils.getItemListWithCounts;
+import static com.cyanogen.experienceobelisk.utils.RecipeUtils.*;
 
 public class MolecularMetamorpherCategory implements IRecipeCategory<MolecularMetamorpherRecipe>{
 
@@ -129,28 +131,65 @@ public class MolecularMetamorpherCategory implements IRecipeCategory<MolecularMe
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, MolecularMetamorpherRecipe recipe, IFocusGroup focuses) {
 
-        ItemStack result = recipe.getResultItem(null);
-        int[] x = {19,50,70};
-        int[] y = {35,52,18};
-
-        for(Map.Entry<Ingredient, Tuple<Integer, Integer>> entry : recipe.getIngredientMapNoFiller().entrySet()){
-
-            int position = entry.getValue().getA() - 1;
-            int count = entry.getValue().getB();
-            Ingredient ingredient = entry.getKey();
-
-            builder.addSlot(RecipeIngredientRole.INPUT, x[position], y[position])
-                    .setSlotName("input" + position)
-                    .addItemStacks(getItemListWithCounts(ingredient, count));
-        }
-
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 140,35).setSlotName("output").addItemStack(result);
-
         if(!recipe.getId().equals(new ResourceLocation(ExperienceObelisk.MOD_ID, "item_name_formatting"))){
             builder.setShapeless();
+            setJsonRecipe(builder, recipe);
+        }
+        else{
+            setNameFormattingRecipe(builder);
         }
 
     }
 
+    public void setJsonRecipe(IRecipeLayoutBuilder builder, MolecularMetamorpherRecipe recipe){
+
+        int[] x = {19,50,70};
+        int[] y = {35,52,18};
+
+
+        for(int i = 1; i <= 3; i++){
+
+            Ingredient ingredient = recipe.getIngredients(true).get(i).getA();
+            int count = recipe.getIngredients(true).get(i).getB();
+
+            builder.addSlot(RecipeIngredientRole.INPUT, x[i - 1], y[i - 1]).setSlotName("input" + i).addItemStacks(getItemListWithCounts(ingredient, count));
+        }
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 140,35).setSlotName("output").addItemStack(recipe.getResultItem(null));
+    }
+
+    public void setNameFormattingRecipe(IRecipeLayoutBuilder builder){
+
+        List<ItemStack> formatItemList = convertItemListToItemStackList(getValidDyes());
+        formatItemList.addAll(convertItemListToItemStackList(getValidFormattingItems()));
+
+        ItemStack inputItem = new ItemStack(RegisterItems.DUMMY_SWORD.get(), 1).copy().setHoverName(Component.translatable("jei.experienceobelisk.name.any_item")); //slot 1
+        Ingredient formatItems = Ingredient.of(formatItemList.stream());
+        List<ItemStack> outputItems = new ArrayList<>();
+
+        for(Item dye : getValidDyes()){
+
+            if(dye instanceof DyeItem dyeItem){
+                int dyeColor = dyeItem.getDyeColor().getId();
+                ChatFormatting format = ChatFormatting.getById(RecipeUtils.dyeColorToTextColor(dyeColor));
+                assert format != null;
+
+                outputItems.add(inputItem.copy().setHoverName(Component.translatable("jei.experienceobelisk.name.any_item").withStyle(format)));
+            }
+        }
+        for(Item formattingItem : getValidFormattingItems()){
+
+            int index = RecipeUtils.getValidFormattingItems().indexOf(formattingItem);
+            char code = RecipeUtils.itemToFormat(index);
+            ChatFormatting format = ChatFormatting.getByCode(code);
+
+            assert format != null;
+            outputItems.add(inputItem.copy().setHoverName(Component.translatable("jei.experienceobelisk.name.any_item").withStyle(format)));
+        }
+
+        builder.addSlot(RecipeIngredientRole.INPUT, 19, 35).setSlotName("input1").addItemStack(inputItem);
+        builder.addSlot(RecipeIngredientRole.INPUT, 50, 52).setSlotName("input2").addItemStack(Items.NAME_TAG.getDefaultInstance());
+        builder.addSlot(RecipeIngredientRole.INPUT, 70, 18).setSlotName("input3").addIngredients(formatItems);
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 140, 35).setSlotName("output").addItemStacks(outputItems);
+    }
 
 }

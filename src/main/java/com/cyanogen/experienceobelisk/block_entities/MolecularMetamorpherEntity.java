@@ -41,6 +41,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -223,7 +224,7 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
 
         if(getRecipe().isPresent()){
             MolecularMetamorpherRecipe recipe = getRecipe().get();
-            ItemStack output = recipe.getResultItem(null);
+            ItemStack output = recipe.assemble(getSimpleContainer(), level == null ? null : level.registryAccess());
             int cost = recipe.getCost();
 
             if(canPerformRecipe(output, cost)){
@@ -236,7 +237,7 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
 
     public boolean canPerformRecipe(ItemStack output, int cost){
 
-        //here we check for criteria that are independent of recipe ingredients
+        //here we check for criteria that are independent of recipe inputs
 
         ItemStack stackInResults = outputHandler.getStackInSlot(0);
 
@@ -284,12 +285,9 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
 
         SimpleContainer container = getSimpleContainer();
 
-        Map<Ingredient, Tuple<Integer, Integer>> ingredientMap = recipe.getIngredientMapNoFiller();
-
-        for(Map.Entry<Ingredient, Tuple<Integer, Integer>> entry : ingredientMap.entrySet()){
-
-            Ingredient ingredient = entry.getKey();
-            int count = entry.getValue().getB();
+        for(int j = 1; j <= 3; j++){
+            Ingredient ingredient = recipe.getIngredients(true).get(j).getA();
+            int count = recipe.getIngredients(true).get(j).getB();
 
             for(int i = 0; i < 3; i++){
                 ItemStack stack = container.getItem(i);
@@ -303,14 +301,20 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
                         else{
                             stack.hurt(1, RandomSource.create(), null);
                         }
+                        break;
                     }
                     else if(stack.hasCraftingRemainingItem()){
                         container.setItem(i, stack.getCraftingRemainingItem());
+                        break;
+                    }
+                    else if(stack.getCount() >= count){
+                        stack.shrink(count);
+                        break;
                     }
                     else{
-                        stack.shrink(count);
+                        count = count - stack.getCount();
+                        stack.shrink(stack.getCount());
                     }
-                    break;
                 }
             }
         }
@@ -383,8 +387,11 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
     public MolecularMetamorpherRecipe getNameFormattingRecipe(){
 
         ItemStack inputItem = inputHandler.getStackInSlot(0);
+        ItemStack nameTag = inputHandler.getStackInSlot(1);
+        ItemStack formatStack = inputHandler.getStackInSlot(2);
+        Item formatItem = formatStack.getItem();
+
         MutableComponent name = inputItem.getHoverName().copy();
-        Item formatItem = inputHandler.getStackInSlot(2).getItem();
 
         if(RecipeUtils.getValidDyes().contains(formatItem)){
 
@@ -406,16 +413,16 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
             }
         }
 
-        Map<Ingredient, Tuple<Integer, Integer>> ingredientMap = new HashMap<>();
-        ingredientMap.put(Ingredient.of(inputItem.copy()), new Tuple<>(1, inputItem.getCount()));
-        ingredientMap.put(Ingredient.of(inputHandler.getStackInSlot(1).copy()), new Tuple<>(2, inputHandler.getStackInSlot(1).getCount()));
-        ingredientMap.put(Ingredient.of(inputHandler.getStackInSlot(2).copy()), new Tuple<>(3, inputHandler.getStackInSlot(2).getCount()));
+        ArrayList<Tuple<Ingredient, Integer>> ingredients = MolecularMetamorpherRecipe.assembleIngredients(
+                Ingredient.of(inputItem.copy()), inputItem.getCount(),
+                Ingredient.of(nameTag.copy()), nameTag.getCount(),
+                Ingredient.of(formatStack.copy()), formatStack.getCount());
 
         ItemStack output = inputItem.copy().setHoverName(name);
         int cost = 315;
         int processTime = 60;
 
-        return new MolecularMetamorpherRecipe(ImmutableMap.copyOf(ingredientMap), output, cost, processTime,
+        return new MolecularMetamorpherRecipe(ingredients, output, cost, processTime,
                 new ResourceLocation(ExperienceObelisk.MOD_ID, "item_name_formatting"));
     }
 

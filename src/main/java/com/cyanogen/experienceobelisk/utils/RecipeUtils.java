@@ -2,22 +2,16 @@ package com.cyanogen.experienceobelisk.utils;
 
 import com.cyanogen.experienceobelisk.ExperienceObelisk;
 import com.cyanogen.experienceobelisk.recipe.MolecularMetamorpherRecipe;
-import com.cyanogen.experienceobelisk.registries.RegisterItems;
-import com.google.common.collect.ImmutableMap;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import com.cyanogen.experienceobelisk.recipe.jei.MolecularMetamorpherCategory;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RecipeUtils {
 
@@ -90,52 +84,24 @@ public class RecipeUtils {
 
     }
 
-    public static List<MolecularMetamorpherRecipe> getNameFormattingRecipesForJEI(){
-
-        List<MolecularMetamorpherRecipe> recipes = new ArrayList<>();
-
-        ItemStack exampleItem = new ItemStack(RegisterItems.DUMMY_SWORD.get(), 1);
-        ItemStack inputItem = exampleItem.copy().setHoverName(Component.translatable("jei.experienceobelisk.name.any_item"));
-        int cost = 315;
-        int processTime = 60;
-        ResourceLocation id = new ResourceLocation(ExperienceObelisk.MOD_ID, "item_name_formatting");
-
-        HashMap<Ingredient, Tuple<Integer, Integer>> ingredientMap = new HashMap<>();
-        ingredientMap.put(Ingredient.of(inputItem), new Tuple<>(1, 1));
-        ingredientMap.put(Ingredient.of(Items.NAME_TAG), new Tuple<>(2, 1));
-
-        for(Item dye : getValidDyes()){
-
-            HashMap<Ingredient, Tuple<Integer, Integer>> ingredientMap2 = new HashMap<>(Map.copyOf(ingredientMap));
-            ingredientMap2.put(Ingredient.of(dye), new Tuple<>(3, 1));
-
-            if(dye instanceof DyeItem dyeItem){
-                int dyeColor = dyeItem.getDyeColor().getId();
-                ChatFormatting format = ChatFormatting.getById(RecipeUtils.dyeColorToTextColor(dyeColor));
-                assert format != null;
-                ItemStack outputItem = exampleItem.copy()
-                        .setHoverName(Component.translatable("jei.experienceobelisk.name.any_item").withStyle(format));
-
-                recipes.add(new MolecularMetamorpherRecipe(ImmutableMap.copyOf(ingredientMap2), outputItem, cost, processTime, id));
-            }
+    public static List<ItemStack> convertItemListToItemStackList(List<Item> itemList){
+        List<ItemStack> itemStackList = new ArrayList<>();
+        for(Item item : itemList){
+            itemStackList.add(item.getDefaultInstance());
         }
-        for(Item item : getValidFormattingItems()){
+        return itemStackList;
+    }
 
-            HashMap<Ingredient, Tuple<Integer, Integer>> ingredientMap2 = new HashMap<>(Map.copyOf(ingredientMap));
-            ingredientMap2.put(Ingredient.of(item.getDefaultInstance()), new Tuple<>(3, 1));
+    /**
+     * Creates a dummy recipe to pass into JEI's recipe handling. Actual population of the slots will occur in the category class.
+     * See {@link MolecularMetamorpherCategory#setNameFormattingRecipe}
+     */
+    public static MolecularMetamorpherRecipe getEmptyNameFormattingRecipe(){
 
-            int index = RecipeUtils.getValidFormattingItems().indexOf(item);
-            char code = RecipeUtils.itemToFormat(index);
-            ChatFormatting format = ChatFormatting.getByCode(code);
-
-            assert format != null;
-            ItemStack outputItem = exampleItem.copy()
-                    .setHoverName(Component.translatable("jei.experienceobelisk.name.any_item").withStyle(format));
-
-            recipes.add(new MolecularMetamorpherRecipe(ImmutableMap.copyOf(ingredientMap2), outputItem, cost, processTime, id));
-        }
-
-        return recipes;
+        ArrayList<Tuple<Ingredient, Integer>> ingredients = MolecularMetamorpherRecipe.assembleIngredients(
+                Ingredient.EMPTY, 0, Ingredient.EMPTY, 0, Ingredient.EMPTY , 0);
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(ExperienceObelisk.MOD_ID, "item_name_formatting");
+        return new MolecularMetamorpherRecipe(ingredients, ItemStack.EMPTY, 315, 60, id);
 
     }
 

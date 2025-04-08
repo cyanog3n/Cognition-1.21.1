@@ -40,12 +40,13 @@ public class CognitionJeiPlugin implements IModPlugin {
         //RECIPES
         List<MolecularMetamorpherRecipe> metamorpherRecipes = new ArrayList<>();
 
+        assert Minecraft.getInstance().level != null;
         for(Recipe<?> recipe : Minecraft.getInstance().level.getRecipeManager().getRecipes()){
             if(recipe instanceof MolecularMetamorpherRecipe metamorpherRecipe){
                 metamorpherRecipes.add(metamorpherRecipe);
             }
         }
-        metamorpherRecipes.addAll(RecipeUtils.getNameFormattingRecipesForJEI());
+        metamorpherRecipes.add(RecipeUtils.getEmptyNameFormattingRecipe());
         registration.addRecipes(metamorpherType, metamorpherRecipes);
 
         //INFO V2

@@ -19,6 +19,9 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
+
+import static com.cyanogen.experienceobelisk.block_entities.ExperienceFountainEntity.customName;
 
 public class EnlightenedAmuletItem extends Item{
 
@@ -93,10 +96,16 @@ public class EnlightenedAmuletItem extends Item{
                     CompoundTag tag = new CompoundTag();
                     orb.addAdditionalSaveData(tag);
 
-                    int value = orb.value;
-                    int count = tag.getInt("Count");
-                    totalValue += value * count;
-                    orb.discard();
+                    boolean spawnedFromFountain = orb.hasCustomName() && Objects.equals(orb.getCustomName(), customName);
+                    boolean ignore = Config.COMMON.amuletIgnoresFountainOrbs.get();
+                    boolean shouldCollect = !(ignore && spawnedFromFountain);
+
+                    if(shouldCollect){
+                        int value = orb.value;
+                        int count = tag.getInt("Count");
+                        totalValue += value * count;
+                        orb.discard();
+                    }
                 }
 
                 ServerLevel server = (ServerLevel) level;
