@@ -2,14 +2,21 @@ package com.cyanogen.experienceobelisk.utils;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MiscUtils {
+
+    //----- MATH -----//
 
     public static double straightLineDistance(BlockPos a, BlockPos b){
 
@@ -18,18 +25,6 @@ public class MiscUtils {
         double deltaZ = Math.abs(a.getZ() - b.getZ());
 
         return Math.sqrt(Math.pow(deltaX,2) + Math.pow(deltaY,2) + Math.pow(deltaZ,2));
-    }
-
-    public static List<String> getLinesFromString(String input, int lineWidth, Font font){
-
-        List<FormattedText> lines = font.getSplitter().splitLines(input, lineWidth, Style.EMPTY);
-        List<String> outputLines = new ArrayList<>();
-
-        for(FormattedText line : lines){
-            outputLines.add(line.getString());
-        }
-
-        return outputLines;
     }
 
     public static float randomInRange(float min, float max){
@@ -64,6 +59,31 @@ public class MiscUtils {
         }
 
         return new Vec3(x,y,z);
+    }
+
+    //----- DATA -----//
+
+    public static CompoundTag getCustomDataTag(ItemStack stack){
+        return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.of(new CompoundTag())).copyTag();
+    }
+
+    public static void saveCustomDataTag(ItemStack stack, CompoundTag tag){
+        DataComponentPatch patch = DataComponentPatch.builder().set(DataComponents.CUSTOM_DATA, CustomData.of(tag)).build();
+        stack.applyComponents(patch);
+    }
+
+    //----- FORMATTING -----//
+
+    public static List<String> getLinesFromString(String input, int lineWidth, Font font){
+
+        List<FormattedText> lines = font.getSplitter().splitLines(input, lineWidth, Style.EMPTY);
+        List<String> outputLines = new ArrayList<>();
+
+        for(FormattedText line : lines){
+            outputLines.add(line.getString());
+        }
+
+        return outputLines;
     }
 
 }

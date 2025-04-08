@@ -34,7 +34,7 @@ public class FluorescentJellyItem extends Item {
 
     @Override
     public @Nullable FoodProperties getFoodProperties(ItemStack stack, @Nullable LivingEntity entity) {
-        return new FoodProperties.Builder().nutrition(getNutrition()).saturationMod(getSaturation()).build();
+        return new FoodProperties.Builder().nutrition(getNutrition()).saturationModifier(getSaturation()).build();
     }
 
     @Override
@@ -57,12 +57,6 @@ public class FluorescentJellyItem extends Item {
         else{
             return super.use(level, player, hand);
         }
-    }
-
-    @Override
-    public boolean isEdible() {
-        return false;
-        //Disable normal vanilla eating behavior for this to work properly
     }
 
 }

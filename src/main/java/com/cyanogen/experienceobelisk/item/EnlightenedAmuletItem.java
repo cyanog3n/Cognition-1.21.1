@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.cyanogen.experienceobelisk.block_entities.ExperienceFountainEntity.customName;
+import static com.cyanogen.experienceobelisk.utils.MiscUtils.getCustomDataTag;
+import static com.cyanogen.experienceobelisk.utils.MiscUtils.saveCustomDataTag;
 
 public class EnlightenedAmuletItem extends Item{
 
@@ -31,8 +33,13 @@ public class EnlightenedAmuletItem extends Item{
 
     @Override
     public @NotNull ItemStack getDefaultInstance() {
+
         ItemStack stack = new ItemStack(this);
-        stack.getOrCreateTag().putBoolean("isActive",false);
+        CompoundTag tag = new CompoundTag();
+        tag.putBoolean("isActive", false);
+
+        saveCustomDataTag(stack, tag);
+
         return stack;
     }
 
@@ -45,7 +52,7 @@ public class EnlightenedAmuletItem extends Item{
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 
         ItemStack stack = player.getItemInHand(hand);
-        CompoundTag tag = stack.getOrCreateTag();
+        CompoundTag tag = getCustomDataTag(stack);
 
         if(player.isShiftKeyDown()){
             boolean isActive = tag.getBoolean("isActive");
@@ -57,7 +64,7 @@ public class EnlightenedAmuletItem extends Item{
                 tag.putBoolean("isActive", true);
                 player.playSound(RegisterSounds.ENLIGHTENED_AMULET_ACTIVATE.get(), 0.2f,1f);
             }
-
+            saveCustomDataTag(stack, tag);
         }
 
         return super.use(level, player, hand);
@@ -65,13 +72,13 @@ public class EnlightenedAmuletItem extends Item{
 
     @Override
     public boolean isFoil(ItemStack stack) {
-        return stack.getOrCreateTag().getBoolean("isActive");
+        return getCustomDataTag(stack).getBoolean("isActive");
     }
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slot, boolean isCurrentItem) {
 
-        boolean isActive = stack.getOrCreateTag().getBoolean("isActive");
+        boolean isActive = getCustomDataTag(stack).getBoolean("isActive");
 
         if(entity instanceof Player player && isActive && !level.isClientSide && level.getGameTime() % 10 == 0){
 
@@ -131,18 +138,18 @@ public class EnlightenedAmuletItem extends Item{
     //-----CUSTOM HOVER TEXT-----//
 
     @Override
-    public void appendHoverText(ItemStack stack, Level level, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
 
-        boolean isActive = stack.getOrCreateTag().getBoolean("isActive");
+        boolean isActive = getCustomDataTag(stack).getBoolean("isActive");
 
         if(isActive){
-            tooltip.add(Component.translatable("tooltip.experienceobelisk.enlightened_amulet.active"));
+            tooltipComponents.add(Component.translatable("tooltip.experienceobelisk.enlightened_amulet.active"));
         }
         else{
-            tooltip.add(Component.translatable("tooltip.experienceobelisk.enlightened_amulet.inactive"));
+            tooltipComponents.add(Component.translatable("tooltip.experienceobelisk.enlightened_amulet.inactive"));
         }
 
-        super.appendHoverText(stack, level, tooltip, flag);
-
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
+
 }
