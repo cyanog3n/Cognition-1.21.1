@@ -4,6 +4,7 @@ import com.cyanogen.experienceobelisk.registries.RegisterSounds;
 import com.cyanogen.experienceobelisk.utils.ExperienceUtils;
 import com.cyanogen.experienceobelisk.utils.MiscUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -15,9 +16,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 public class FlaskHadesItem extends Item{
 
@@ -43,6 +44,7 @@ public class FlaskHadesItem extends Item{
         Level level = context.getLevel();
         BlockPos clickedPos = context.getClickedPos();
         BlockPos placePos = context.getClickedPos().relative(context.getClickedFace());
+        Direction direction = context.getClickedFace();
 
         if(player != null && (player.isCreative() || ExperienceUtils.getTotalXp(player) >= cost) && !player.getCooldowns().isOnCooldown(this)){
 
@@ -67,9 +69,9 @@ public class FlaskHadesItem extends Item{
 
                 BlockEntity entity = level.getBlockEntity(clickedPos);
                 assert entity != null;
-                if(entity.getCapability(ForgeCapabilities.FLUID_HANDLER).resolve().isPresent()){
-                    IFluidHandler handler = entity.getCapability(ForgeCapabilities.FLUID_HANDLER).resolve().get();
 
+                IFluidHandler handler = level.getCapability(Capabilities.FluidHandler.BLOCK, clickedPos, direction);
+                if(handler != null){
                     int drainAmount = handler.fill(fluidStack, IFluidHandler.FluidAction.SIMULATE);
 
                     if(drainAmount != 0){

@@ -54,19 +54,6 @@ public class ExperienceObeliskItem extends BlockItem implements GeoItem{
         return cache;
     }
 
-    @Override
-    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        super.initializeClient(consumer);
-        consumer.accept(new IClientItemExtensions() {
-            private final BlockEntityWithoutLevelRenderer renderer = new ExperienceObeliskItemRenderer();
-
-            @Override
-            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                return renderer;
-            }
-        });
-    }
-
     //-----CUSTOM HOVER TEXT-----//
 
     @Override

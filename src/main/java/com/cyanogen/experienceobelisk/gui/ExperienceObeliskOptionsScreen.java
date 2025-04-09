@@ -26,7 +26,7 @@ public class ExperienceObeliskOptionsScreen extends Screen {
     public ExperienceObeliskEntity xpobelisk;
     public ExperienceObeliskMenu menu;
 
-    private final ResourceLocation texture = new ResourceLocation("experienceobelisk:textures/gui/screens/experience_obelisk.png");
+    private final ResourceLocation texture = ResourceLocation.fromNamespaceAndPath("experienceobelisk","textures/gui/screens/experience_obelisk.png");
 
     protected ExperienceObeliskOptionsScreen(BlockPos pos, ExperienceObeliskMenu menu) {
         super(Component.literal("Experience Obelisk"));
@@ -49,7 +49,7 @@ public class ExperienceObeliskOptionsScreen extends Screen {
     @Override
     public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
 
-        renderBackground(gui);
+        renderBackground(gui, mouseX, mouseY, partialTick);
 
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, texture);

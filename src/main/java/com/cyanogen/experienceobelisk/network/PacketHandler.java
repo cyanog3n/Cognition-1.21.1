@@ -7,8 +7,6 @@ import com.cyanogen.experienceobelisk.network.precision_dispeller.UpdateSlot;
 import com.cyanogen.experienceobelisk.network.shared.UpdateInventory;
 import com.cyanogen.experienceobelisk.network.shared.UpdateRedstone;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
 
 public final class PacketHandler {
 
