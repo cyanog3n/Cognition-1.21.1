@@ -19,6 +19,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Tuple;
@@ -30,7 +31,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
@@ -170,8 +173,6 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
 
     protected ItemStackHandler inputHandler = inputHandler();
     protected ItemStackHandler outputHandler = outputHandler();
-    private final LazyOptional<IItemHandler> inputHandlerOptional = LazyOptional.of(() -> inputHandler);
-    private final LazyOptional<IItemHandler> outputHandlerOptional = LazyOptional.of(() -> outputHandler);
 
     public ItemStackHandler inputHandler() {
         return new ItemStackHandler(3);
@@ -194,28 +195,26 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
         return outputHandler;
     }
 
-    @Override
-    @Nonnull
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing)
-    {
-        if(capability == ForgeCapabilities.ITEM_HANDLER){
-
-            if(facing == Direction.DOWN){
-                return outputHandlerOptional.cast();
+    public static @Nullable IItemHandler getCapability(Level level, BlockPos blockPos, BlockState blockState, @Nullable BlockEntity blockEntity, Direction direction) {
+        if(blockEntity instanceof MolecularMetamorpherEntity metamorpher){
+            if(direction == Direction.DOWN){
+                return metamorpher.getOutputHandler();
             }
-            else if(facing != Direction.UP){
-                return inputHandlerOptional.cast();
+            else if(direction != Direction.UP){
+                return metamorpher.getInputHandler();
             }
         }
-
-        return super.getCapability(capability, facing);
+        return null;
     }
 
-    @Override
-    public void invalidateCaps() {
-        inputHandlerOptional.invalidate();
-        outputHandlerOptional.invalidate();
-        super.invalidateCaps();
+    public @Nullable IItemHandler getCapability(Direction direction) {
+        if(direction == Direction.DOWN){
+            return getOutputHandler();
+        }
+        else if(direction != Direction.UP){
+            return getInputHandler();
+        }
+        return null;
     }
 
     //-----------RECIPE HANDLER-----------//
@@ -298,8 +297,8 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
                         if(stack.getDamageValue() >= TransformingFocusItem.durability - 1){
                             stack.shrink(1);
                         }
-                        else{
-                            stack.hurt(1, RandomSource.create(), null);
+                        else if(level != null && !level.isClientSide){
+                            stack.hurtAndBreak(1, (ServerLevel) level, null, onBreak -> {});
                         }
                         break;
                     }

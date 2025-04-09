@@ -8,6 +8,7 @@ import com.cyanogen.experienceobelisk.registries.RegisterTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -24,19 +25,19 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 import static com.cyanogen.experienceobelisk.utils.ExperienceUtils.levelsToXP;
 import static com.cyanogen.experienceobelisk.utils.ExperienceUtils.xpToLevels;
 
-public class ExperienceObeliskEntity extends BlockEntity implements GeoBlockEntity{
+public class ExperienceObeliskEntity extends BlockEntity implements GeoBlockEntity {
 
     public ExperienceObeliskEntity(BlockPos pos, BlockState state) {
         super(RegisterBlockEntities.EXPERIENCE_OBELISK.get(), pos, state);
@@ -161,9 +162,7 @@ public class ExperienceObeliskEntity extends BlockEntity implements GeoBlockEnti
 
     protected FluidTank tank = experienceObeliskTank();
 
-    private final LazyOptional<IFluidHandler> handler = LazyOptional.of(() -> tank);
-
-    private static final Fluid cognitium = RegisterFluids.COGNITIUM.get().getSource();
+    private static final Fluid cognitium = RegisterFluids.COGNITIUM.get();
 
     public static final int capacity = (int) Math.min((Math.round((double) Config.COMMON.capacity.get() / 20) * 20), 2147483640);
 
@@ -183,7 +182,7 @@ public class ExperienceObeliskEntity extends BlockEntity implements GeoBlockEnti
 
             @Override
             public boolean isFluidValid(FluidStack stack) {
-                String fluidName = String.valueOf(ForgeRegistries.FLUIDS.getKey(stack.getFluid()));
+                String fluidName = BuiltInRegistries.FLUID.getKey(stack.getFluid()).toString();
 
                 if(stack.getFluid() == cognitium){
                     return true;
@@ -261,18 +260,26 @@ public class ExperienceObeliskEntity extends BlockEntity implements GeoBlockEnti
         return xpToLevels(getExperiencePoints());
     }
 
-    @Override
-    @Nonnull
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
-        if (capability == ForgeCapabilities.FLUID_HANDLER)
-            return handler.cast();
-        return super.getCapability(capability, facing);
+    public static @Nullable IFluidHandler getCapability(Level level, BlockPos blockPos, BlockState blockState, @Nullable BlockEntity blockEntity, Direction direction) {
+        //for modded compatibility
+
+        if(blockEntity instanceof ExperienceObeliskEntity obelisk && direction != Direction.UP){
+            return obelisk.tank;
+        }
+        else{
+            return null;
+        }
     }
 
-    @Override
-    public void invalidateCaps() {
-        handler.invalidate();
-        super.invalidateCaps();
+    public @Nullable IFluidHandler getCapability(Direction direction) {
+        //for internal usage, if I already know i'm querying an Experience Obelisk
+
+        if(direction != Direction.UP){
+            return experienceObeliskTank();
+        }
+        else{
+            return null;
+        }
     }
 
     //-----------NBT-----------//
@@ -415,7 +422,6 @@ public class ExperienceObeliskEntity extends BlockEntity implements GeoBlockEnti
             this.setFluid(0);
         }
     }
-
 
 }
 
