@@ -370,9 +370,8 @@ public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionD
                             outputItem = new ItemStack(Items.BOOK, 1);
                         }
                         else{
-                            outputItem = new ItemStack(Items.ENCHANTED_BOOK,1);
                             for(Map.Entry<Enchantment,Integer> entry : map.entrySet()){
-                                EnchantedBookItem.addEnchantment(outputItem, new EnchantmentInstance(entry.getKey(), entry.getValue()));
+                                outputItem = EnchantedBookItem.createForEnchantment(new EnchantmentInstance(entry.getKey(), entry.getValue()));
                             }
                         }
                     }

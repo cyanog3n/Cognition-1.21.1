@@ -1,23 +1,18 @@
 package com.cyanogen.experienceobelisk.item;
 
-import com.cyanogen.experienceobelisk.renderer.MolecularMetamorpherItemRenderer;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import com.cyanogen.experienceobelisk.utils.ItemUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 public class MolecularMetamorpherItem extends BlockItem implements GeoItem {
 
@@ -54,35 +49,22 @@ public class MolecularMetamorpherItem extends BlockItem implements GeoItem {
         return cache;
     }
 
-    @Override
-    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-        super.initializeClient(consumer);
-        consumer.accept(new IClientItemExtensions() {
-            private final BlockEntityWithoutLevelRenderer renderer = new MolecularMetamorpherItemRenderer();
-
-            @Override
-            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                return renderer;
-            }
-        });
-    }
-
     //-----CUSTOM HOVER TEXT-----//
 
-
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
 
-        CompoundTag inputs = stack.getOrCreateTag().getCompound("BlockEntityTag").getCompound("Inputs");
-        CompoundTag outputs = stack.getOrCreateTag().getCompound("BlockEntityTag").getCompound("Outputs");
+        CompoundTag inputs = ItemUtils.getBlockEntityTag(stack).getCompound("Inputs");
+        CompoundTag outputs = ItemUtils.getBlockEntityTag(stack).getCompound("Outputs");
 
         boolean isEmpty = inputs.getList("Items", 10).isEmpty() && outputs.getList("Items",10).isEmpty();
         //Each itemstack is a compound, which has an ID of 10. See net.minecraft.nbt.Tag
 
         if(!isEmpty){
-            tooltip.add(Component.translatable("tooltip.experienceobelisk.molecular_metamorpher.has_contents"));
+            tooltipComponents.add(Component.translatable("tooltip.experienceobelisk.molecular_metamorpher.has_contents"));
         }
 
-        super.appendHoverText(stack, level, tooltip, flag);
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
     }
+
 }

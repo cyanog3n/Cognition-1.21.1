@@ -3,10 +3,13 @@ package com.cyanogen.experienceobelisk.gui;
 import com.cyanogen.experienceobelisk.block_entities.ExperienceObeliskEntity;
 import com.cyanogen.experienceobelisk.block_entities.PrecisionDispellerEntity;
 import com.cyanogen.experienceobelisk.registries.RegisterMenus;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Inventory;
@@ -15,12 +18,10 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 public class PrecisionDispellerMenu extends AbstractContainerMenu {
 
@@ -116,23 +117,23 @@ public class PrecisionDispellerMenu extends AbstractContainerMenu {
 
         if(!level.isClientSide){
             ServerLevel server = (ServerLevel) level;
-            Enchantment removed = null;
+            Holder<Enchantment> removed = null;
             int enchLevel = 0;
 
-            Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(inputItem);
-            Map<Enchantment, Integer> map2 = EnchantmentHelper.getEnchantments(outputItem);
+            ItemEnchantments inputEnchantments = inputItem.getTagEnchantments();
+            ItemEnchantments outputEnchantments = inputItem.getTagEnchantments();
 
-            for(Map.Entry<Enchantment, Integer> entry : map.entrySet()){
-                if(!map2.containsKey(entry.getKey())){
+            for(Object2IntMap.Entry<Holder<Enchantment>> entry : inputEnchantments.entrySet()){
+
+                if(!outputEnchantments.keySet().contains(entry.getKey())){
                     removed = entry.getKey();
-                    enchLevel = entry.getValue();
+                    enchLevel = entry.getIntValue();
                     break;
                 }
             }
 
             if(removed != null){
-                if(dispellerServer.isBound &&
-                        server.getBlockEntity(dispellerServer.getBoundPos()) instanceof ExperienceObeliskEntity obelisk){
+                if(dispellerServer.isBound && server.getBlockEntity(dispellerServer.getBoundPos()) instanceof ExperienceObeliskEntity obelisk){
                     handleExperienceBound(removed, enchLevel, server, obelisk);
                 }
                 else{
@@ -143,9 +144,9 @@ public class PrecisionDispellerMenu extends AbstractContainerMenu {
         }
     }
 
-    public void handleExperienceBound(Enchantment removed, int enchLevel, ServerLevel server, ExperienceObeliskEntity obelisk){
+    public void handleExperienceBound(Holder<Enchantment> removed, int enchLevel, ServerLevel server, ExperienceObeliskEntity obelisk){
 
-        if(removed.isCurse()){
+        if(removed.is(EnchantmentTags.CURSE)){
             if(obelisk.getFluidAmount() >= 1395 * 20){
                 obelisk.drain(1395 * 20);
             }
@@ -156,7 +157,7 @@ public class PrecisionDispellerMenu extends AbstractContainerMenu {
             }
         }
         else{
-            int points = removed.getMinCost(enchLevel);
+            int points = removed.value().getMinCost(enchLevel);
             if(obelisk.getSpace() / 20 < points){
                 int remainder = points - obelisk.getSpace() / 20;
                 obelisk.setFluid(ExperienceObeliskEntity.capacity);
@@ -170,12 +171,12 @@ public class PrecisionDispellerMenu extends AbstractContainerMenu {
         }
     }
 
-    public void handleExperienceUnbound(Enchantment removed, int enchLevel, ServerLevel server){
-        if(removed.isCurse()){
+    public void handleExperienceUnbound(Holder<Enchantment> removed, int enchLevel, ServerLevel server){
+        if(removed.is(EnchantmentTags.CURSE)){
             player.giveExperiencePoints(-1395); //30 base levels
         }
         else{
-            int points = removed.getMinCost(enchLevel);
+            int points = removed.value().getMinCost(enchLevel);
             ExperienceOrb orb = new ExperienceOrb(server, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, points);
             server.addFreshEntity(orb);
         }

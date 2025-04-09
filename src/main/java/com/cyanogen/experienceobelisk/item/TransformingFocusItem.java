@@ -1,6 +1,6 @@
 package com.cyanogen.experienceobelisk.item;
 
-import com.cyanogen.experienceobelisk.utils.ItemUtils;
+import com.cyanogen.experienceobelisk.utils.EnchantmentUtils;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -35,7 +35,7 @@ public class TransformingFocusItem extends Item {
 
     @Override
     public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-        return ItemUtils.getEnchantmentLevel(stack, Enchantments.UNBREAKING) > 0;
+        return EnchantmentUtils.getEnchantmentLevel(stack, Enchantments.UNBREAKING) > 0;
     }
 
     @Override
