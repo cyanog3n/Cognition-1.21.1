@@ -2,15 +2,10 @@ package com.cyanogen.experienceobelisk;
 
 import com.cyanogen.experienceobelisk.config.Config;
 import com.cyanogen.experienceobelisk.event.EventHandler;
-import com.cyanogen.experienceobelisk.gui.ExperienceObeliskScreen;
-import com.cyanogen.experienceobelisk.gui.MolecularMetamorpherScreen;
-import com.cyanogen.experienceobelisk.gui.PrecisionDispellerScreen;
 import com.cyanogen.experienceobelisk.network.PacketHandler;
 import com.cyanogen.experienceobelisk.registries.*;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraftforge.common.MinecraftForge;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -43,7 +38,7 @@ public class ExperienceObelisk
 
         PacketHandler.init();
 
-        MinecraftForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(this);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
@@ -51,9 +46,9 @@ public class ExperienceObelisk
     }
 
     private void clientSetup(final FMLClientSetupEvent event){
-        MenuScreens.register(RegisterMenus.EXPERIENCE_OBELISK_MENU.get(), ExperienceObeliskScreen::new);
-        MenuScreens.register(RegisterMenus.PRECISION_DISPELLER_MENU.get(), PrecisionDispellerScreen::new);
-        MenuScreens.register(RegisterMenus.MOLECULAR_METAMORPHER_MENU.get(), MolecularMetamorpherScreen::new);
+        //MenuScreens.register(RegisterMenus.EXPERIENCE_OBELISK_MENU.get(), ExperienceObeliskScreen::new);
+        //MenuScreens.register(RegisterMenus.PRECISION_DISPELLER_MENU.get(), PrecisionDispellerScreen::new);
+        //MenuScreens.register(RegisterMenus.MOLECULAR_METAMORPHER_MENU.get(), MolecularMetamorpherScreen::new);
 
         ItemBlockRenderTypes.setRenderLayer(RegisterFluids.COGNITIUM.get(), RenderType.translucent());
         ItemBlockRenderTypes.setRenderLayer(RegisterFluids.COGNITIUM_FLOWING.get(), RenderType.translucent());
