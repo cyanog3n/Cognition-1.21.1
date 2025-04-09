@@ -2,6 +2,7 @@ package com.cyanogen.experienceobelisk.recipe;
 
 import com.cyanogen.experienceobelisk.ExperienceObelisk;
 import com.google.gson.JsonObject;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
-public class MolecularMetamorpherRecipe implements Recipe<SimpleContainer> {
+public class MolecularMetamorpherRecipe implements Recipe<RecipeInput> {
 
     private final ArrayList<Tuple<Ingredient, Integer>> ingredients; //A -- ingredient, B -- count
     private final ItemStack output;
@@ -81,6 +82,11 @@ public class MolecularMetamorpherRecipe implements Recipe<SimpleContainer> {
     }
 
     @Override
+    public ItemStack assemble(SimpleContainer simpleContainer, HolderLookup.Provider provider) {
+        return null;
+    }
+
+    @Override
     public NonNullList<Ingredient> getIngredients() {
         NonNullList<Ingredient> list = NonNullList.create();
         for(Tuple<Ingredient, Integer> ingredient : this.ingredients){
@@ -99,8 +105,23 @@ public class MolecularMetamorpherRecipe implements Recipe<SimpleContainer> {
     }
 
     @Override
+    public boolean matches(RecipeInput recipeInput, Level level) {
+        return false;
+    }
+
+    @Override
+    public ItemStack assemble(RecipeInput recipeInput, HolderLookup.Provider provider) {
+        return null;
+    }
+
+    @Override
     public boolean canCraftInDimensions(int width, int height) {
         return true;
+    }
+
+    @Override
+    public ItemStack getResultItem(HolderLookup.Provider provider) {
+        return null;
     }
 
     @Override

@@ -8,11 +8,11 @@ import com.cyanogen.experienceobelisk.registries.RegisterBlockEntities;
 import com.cyanogen.experienceobelisk.registries.RegisterItems;
 import com.cyanogen.experienceobelisk.registries.RegisterSounds;
 import com.cyanogen.experienceobelisk.utils.RecipeUtils;
-import com.google.common.collect.ImmutableMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.Packet;
@@ -21,7 +21,6 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.DyeItem;
@@ -29,11 +28,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
@@ -42,11 +41,8 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implements GeoBlockEntity {
@@ -221,8 +217,8 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
 
     public boolean handleJsonRecipes(){
 
-        if(getRecipe().isPresent()){
-            MolecularMetamorpherRecipe recipe = getRecipe().get();
+        if(getRecipe() != null){
+            MolecularMetamorpherRecipe recipe = getRecipe();
             ItemStack output = recipe.assemble(getSimpleContainer(), level == null ? null : level.registryAccess());
             int cost = recipe.getCost();
 
@@ -242,8 +238,7 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
 
         return getBoundObelisk() != null //has been bound to a valid obelisk
                 && getBoundObelisk().getFluidAmount() >= cost * 20 //obelisk has enough Cognitium
-                && (ItemStack.isSameItemSameTags(stackInResults, output)
-                || stackInResults.isEmpty() || stackInResults.is(Items.AIR)) //results slot empty or same as output
+                && (ItemStack.isSameItemSameComponents(stackInResults, output) || stackInResults.isEmpty() || stackInResults.is(Items.AIR)) //results slot empty or same as output
                 && stackInResults.getCount() <= output.getMaxStackSize() - output.getCount(); //results slot can accommodate output
     }
 
@@ -265,7 +260,7 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
         //returns false if the recipe has been changed to a different one or if the recipe is now invalid
         //in which case, the XP is refunded and the metamorpher is reset
 
-        boolean hasValidJsonRecipe = getRecipe().isPresent() && getRecipe().get().getId().equals(recipeId);
+        boolean hasValidJsonRecipe = (getRecipe() != null) && getRecipe().getId().equals(recipeId);
 
         if(hasValidJsonRecipe || hasNameFormattingRecipe()){
             return true;
@@ -325,11 +320,11 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
 
         setProcessing(false);
 
-        Optional<? extends Recipe<?>> optional = level.getRecipeManager().byKey(recipeId);
+        Optional<RecipeHolder<?>> optional = level.getRecipeManager().byKey(recipeId);
         MolecularMetamorpherRecipe recipe = null;
 
-        if(optional.isPresent() && optional.get() instanceof MolecularMetamorpherRecipe){
-            recipe = (MolecularMetamorpherRecipe) optional.get();
+        if(optional.isPresent() && optional.get().value() instanceof MolecularMetamorpherRecipe){
+            recipe = (MolecularMetamorpherRecipe) optional.get().value();
         }
         else if(hasNameFormattingRecipe()){
             recipe = getNameFormattingRecipe();
@@ -341,7 +336,7 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
             SimpleContainer remainders = deplete(recipe);
             int count = result.getCount();
 
-            if(ItemStack.isSameItemSameTags(result, stackInResults)){
+            if(ItemStack.isSameItemSameComponents(result, stackInResults)){
                 stackInResults.grow(count);
                 outputHandler.setStackInSlot(0, stackInResults);
             }
@@ -417,20 +412,46 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
                 Ingredient.of(nameTag.copy()), nameTag.getCount(),
                 Ingredient.of(formatStack.copy()), formatStack.getCount());
 
-        ItemStack output = inputItem.copy().setHoverName(name);
+        ItemStack output = inputItem.copy();
+        output.set(DataComponents.ITEM_NAME, name);
+
         int cost = 315;
         int processTime = 60;
 
         return new MolecularMetamorpherRecipe(ingredients, output, cost, processTime,
-                new ResourceLocation(ExperienceObelisk.MOD_ID, "item_name_formatting"));
+                ResourceLocation.fromNamespaceAndPath(ExperienceObelisk.MOD_ID, "item_name_formatting"));
     }
 
     //-----------UTILITY METHODS-----------//
 
-    public Optional<MolecularMetamorpherRecipe> getRecipe(){
-        return this.level.getRecipeManager().getRecipeFor(MolecularMetamorpherRecipe.Type.INSTANCE, getSimpleContainer(), level);
+    public @Nullable MolecularMetamorpherRecipe getRecipe(){
+        Optional<RecipeHolder<MolecularMetamorpherRecipe>> holder =
+                this.level.getRecipeManager().getRecipeFor(MolecularMetamorpherRecipe.Type.INSTANCE, getRecipeInput(), level);
+
+        return holder.map(RecipeHolder::value).orElse(null);
     }
 
+    public RecipeInput getRecipeInput(){
+
+        return new RecipeInput() {
+            @Override
+            public ItemStack getItem(int slot) {
+                return switch (slot) {
+                    case 0 -> inputHandler.getStackInSlot(0).copy();
+                    case 1 -> inputHandler.getStackInSlot(1).copy();
+                    case 2 -> inputHandler.getStackInSlot(2).copy();
+                    default -> ItemStack.EMPTY;
+                };
+            }
+
+            @Override
+            public int size() {
+                return 3;
+            }
+        };
+    }
+
+    @Deprecated
     public SimpleContainer getSimpleContainer(){
         SimpleContainer container = new SimpleContainer(3);
         container.setItem(0, inputHandler.getStackInSlot(0).copy());
@@ -438,10 +459,6 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
         container.setItem(2, inputHandler.getStackInSlot(2).copy());
 
         return container;
-    }
-
-    public boolean isProcessing(){
-        return isProcessing;
     }
 
     public void setProcessing(boolean isProcessing){
