@@ -15,7 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +41,8 @@ public class CognitionJeiPlugin implements IModPlugin {
         List<MolecularMetamorpherRecipe> metamorpherRecipes = new ArrayList<>();
 
         assert Minecraft.getInstance().level != null;
-        for(Recipe<?> recipe : Minecraft.getInstance().level.getRecipeManager().getRecipes()){
-            if(recipe instanceof MolecularMetamorpherRecipe metamorpherRecipe){
+        for(RecipeHolder<?> recipe : Minecraft.getInstance().level.getRecipeManager().getRecipes()){
+            if(recipe.value() instanceof MolecularMetamorpherRecipe metamorpherRecipe){
                 metamorpherRecipes.add(metamorpherRecipe);
             }
         }
@@ -92,7 +92,7 @@ public class CognitionJeiPlugin implements IModPlugin {
 
     @Override
     public ResourceLocation getPluginUid() {
-        return new ResourceLocation(ExperienceObelisk.MOD_ID, "jei_plugin");
+        return ResourceLocation.fromNamespaceAndPath(ExperienceObelisk.MOD_ID, "jei_plugin");
     }
 
 }

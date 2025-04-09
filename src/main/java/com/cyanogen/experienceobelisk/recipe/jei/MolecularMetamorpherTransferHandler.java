@@ -103,7 +103,7 @@ public class MolecularMetamorpherTransferHandler implements IRecipeTransferHandl
                     ItemStack playerStack = player.getInventory().getItem(k);
 
                     if(!(k == spaces[0] || k == spaces[1] || k == spaces[2])){
-                        if(ItemStack.isSameItemSameTags(menuStack, playerStack) && menuStack.getCount() + playerStack.getCount() <= menuStack.getMaxStackSize()){
+                        if(ItemStack.isSameItemSameComponents(menuStack, playerStack) && menuStack.getCount() + playerStack.getCount() <= menuStack.getMaxStackSize()){
                             spaces[i] = k;
                         }
                         else if(playerStack.isEmpty()){
@@ -173,7 +173,7 @@ public class MolecularMetamorpherTransferHandler implements IRecipeTransferHandl
 
                     ItemStack playerStack = player.getInventory().getItem(k);
 
-                    if(ItemStack.isSameItemSameTags(playerStack, ingredientStack)){
+                    if(ItemStack.isSameItemSameComponents(playerStack, ingredientStack)){
 
                         countToTransfer[i] -= menu.put(playerStack, countToTransfer[i]);
                     }
@@ -213,7 +213,7 @@ public class MolecularMetamorpherTransferHandler implements IRecipeTransferHandl
                 for(int j = 0; j < player.getInventory().items.size(); j++){
                     ItemStack playerStack = player.getInventory().getItem(j);
 
-                    if(ItemStack.isSameItemSameTags(playerStack, ingredientStack)){
+                    if(ItemStack.isSameItemSameComponents(playerStack, ingredientStack)){
 
                         playerItems[position] = ingredientStack.copy();
                         playerItemCount[position] += playerStack.getCount();
@@ -223,7 +223,7 @@ public class MolecularMetamorpherTransferHandler implements IRecipeTransferHandl
                 for(int k = 0; k < 3; k++){
                     ItemStack menuStack = menu.getSlot(k).getItem();
 
-                    if(ItemStack.isSameItemSameTags(menuStack, ingredientStack)){
+                    if(ItemStack.isSameItemSameComponents(menuStack, ingredientStack)){
 
                         playerItems[position] = ingredientStack.copy();
                         playerItemCount[position] += menuStack.getCount();
