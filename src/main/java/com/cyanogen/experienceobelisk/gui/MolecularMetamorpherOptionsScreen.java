@@ -20,7 +20,7 @@ import java.util.List;
 
 public class MolecularMetamorpherOptionsScreen extends Screen{
 
-    private final ResourceLocation texture = new ResourceLocation("experienceobelisk:textures/gui/screens/experience_obelisk.png");
+    private final ResourceLocation texture = ResourceLocation.parse("experienceobelisk:textures/gui/screens/experience_obelisk.png");
     private final MolecularMetamorpherMenu menu;
     private final MolecularMetamorpherEntity metamorpher;
     private final BlockPos pos;
@@ -51,7 +51,7 @@ public class MolecularMetamorpherOptionsScreen extends Screen{
     @Override
     public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
 
-        renderBackground(gui);
+        renderBackground(gui, mouseX, mouseY, partialTick);
 
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, texture);

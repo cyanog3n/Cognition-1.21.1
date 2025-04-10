@@ -3,17 +3,22 @@ package com.cyanogen.experienceobelisk.gui;
 import com.cyanogen.experienceobelisk.block_entities.PrecisionDispellerEntity;
 import com.cyanogen.experienceobelisk.network.PacketHandler;
 import com.cyanogen.experienceobelisk.network.precision_dispeller.UpdateSlot;
+import com.cyanogen.experienceobelisk.utils.EnchantmentUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
@@ -21,18 +26,16 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static com.cyanogen.experienceobelisk.utils.ExperienceUtils.levelsToXP;
 import static com.cyanogen.experienceobelisk.utils.ExperienceUtils.xpToLevels;
 
 public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionDispellerMenu> {
 
-    private final ResourceLocation texture = new ResourceLocation("experienceobelisk:textures/gui/screens/precision_dispeller.png");
+    private final ResourceLocation texture = ResourceLocation.parse("experienceobelisk:textures/gui/screens/precision_dispeller.png");
     private final Component title = Component.translatable("title.experienceobelisk.precision_dispeller");
     private final Component inventoryTitle = Component.translatable("title.experienceobelisk.precision_dispeller.inventory");
 
@@ -57,7 +60,7 @@ public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionD
     }
 
     private static class SelectablePanel{
-        public Enchantment enchantment;
+        public Holder<Enchantment> enchantment;
         public int level;
         public int x1;
         public int x2;
@@ -68,7 +71,7 @@ public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionD
         GuiGraphics gui;
         ResourceLocation texture;
 
-        private SelectablePanel(int x1, int y1, Enchantment e, int level, Status s, boolean isVisible, GuiGraphics gui, ResourceLocation texture){
+        private SelectablePanel(int x1, int y1, Holder<Enchantment> e, int level, Status s, boolean isVisible, GuiGraphics gui, ResourceLocation texture){
             this.enchantment = e;
             this.x1 = x1;
             this.y1 = y1;
@@ -94,8 +97,7 @@ public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionD
         }
 
         public String getFullName(){
-            Component fullName = enchantment.getFullname(level);
-            return fullName.copy().getString();
+            return enchantment.getRegisteredName();
         }
 
         public void renderText(Font font){
@@ -109,7 +111,7 @@ public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionD
             }
 
             int color;
-            if(enchantment.isCurse()){
+            if(enchantment.is(EnchantmentTags.CURSE)){
                 color = 0xFC5454;
             }
             else{
@@ -122,7 +124,7 @@ public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionD
         }
     }
 
-    public ArrayList<SelectablePanel> selectablePanels = new ArrayList<>();
+    private final ArrayList<SelectablePanel> selectablePanels = new ArrayList<>();
     public int selectedIndex = -1;
 
     //-----RENDERING-----//
@@ -137,7 +139,7 @@ public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionD
     public void render(GuiGraphics gui, int mouseX, int mouseY, float partialTick) {
 
         selectablePanels.clear();
-        renderBackground(gui);
+        renderBackground(gui, mouseX, mouseY, partialTick);
 
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, texture);
@@ -149,7 +151,8 @@ public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionD
         gui.blit(texture, x, y, 0, 0, 176, 166);
 
         ItemStack inputStack = menu.container.getItem(0);
-        Map<Enchantment,Integer> enchantmentMap = EnchantmentHelper.getEnchantments(inputStack);
+        HashMap<Holder<Enchantment>,Integer> enchantmentMap = EnchantmentUtils.getEnchantmentMap(inputStack);
+
         scrollEnabled = enchantmentMap.size() > 3;
 
         //render scroll button
@@ -165,7 +168,7 @@ public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionD
             int index = 0;
 
             //populating selectablePanels
-            for(Map.Entry<Enchantment, Integer> entry : enchantmentMap.entrySet()){
+            for(HashMap.Entry<Holder<Enchantment>, Integer> entry : enchantmentMap.entrySet()){
 
                 int n = enchantmentMap.size() - 3;
                 int b = scrollButtonPos - 18;
@@ -231,7 +234,7 @@ public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionD
                 List<Component> tooltipList = new ArrayList<>();
                 tooltipList.add(Component.literal(panel.getFullName()));
 
-                if(panel.enchantment.isCurse()){
+                if(panel.enchantment.is(EnchantmentTags.CURSE)){
 
                     tooltipList.add(Component.translatable("tooltip.experienceobelisk.precision_dispeller.curse"));
 
@@ -243,7 +246,7 @@ public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionD
                     }
                 }
                 else{
-                    int points = panel.enchantment.getMinCost(panel.level);
+                    int points = panel.enchantment.value().getMinCost(panel.level);
                     int levels = xpToLevels(points);
 
                     MutableComponent pts = Component.translatable(String.valueOf(points)).withStyle(ChatFormatting.GREEN);
@@ -263,13 +266,13 @@ public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionD
     int clickedDelta = -1;
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
 
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
 
         if(mouseX >= x + 48 && mouseX <= x + 162 && mouseY >= y + 17 && mouseY <= y + 69 && scrollEnabled){
-            scrollButtonPos = scrollButtonPos - 4 * (int) delta;
+            scrollButtonPos = scrollButtonPos - 4 * (int) scrollY;
         }
 
         if(scrollButtonPos > 56){
@@ -279,7 +282,7 @@ public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionD
             scrollButtonPos = 18;
         }
 
-        return super.mouseScrolled(mouseX, mouseY, delta);
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
     @Override
@@ -341,7 +344,7 @@ public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionD
 
             boolean invalid;
 
-            if(menu.player.isCreative() || !panel.enchantment.isCurse()){
+            if(menu.player.isCreative() || !panel.enchantment.is(EnchantmentTags.CURSE)){
                 invalid = false;
             }
             else if(!dispeller.obeliskStillExists){
@@ -361,7 +364,7 @@ public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionD
                     selectedIndex = selectablePanels.indexOf(panel);
 
                     ItemStack inputItem = menu.container.getItem(0);
-                    Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(inputItem);
+                    HashMap<Holder<Enchantment>, Integer> map = EnchantmentUtils.getEnchantmentMap(inputItem);
                     map.remove(panel.enchantment);
                     ItemStack outputItem;
 
@@ -370,23 +373,23 @@ public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionD
                             outputItem = new ItemStack(Items.BOOK, 1);
                         }
                         else{
-                            for(Map.Entry<Enchantment,Integer> entry : map.entrySet()){
+                            for(Map.Entry<Holder<Enchantment>,Integer> entry : map.entrySet()){
                                 outputItem = EnchantedBookItem.createForEnchantment(new EnchantmentInstance(entry.getKey(), entry.getValue()));
                             }
                         }
                     }
                     else{
                         outputItem = inputItem.copy();
-                        EnchantmentHelper.setEnchantments(map, outputItem);
+                        EnchantmentHelper.setEnchantments(outputItem, EnchantmentUtils.getItemEnchantmentsFromMap(map));
 
-                        int repairCost = outputItem.getBaseRepairCost();
+                        int repairCost = outputItem.getOrDefault(DataComponents.REPAIR_COST, 0);
                         repairCost = (repairCost - 1) / 2;
 
                         if(repairCost < 1 || !outputItem.isEnchanted()){
                             repairCost = 0;
                         }
 
-                        outputItem.setRepairCost(repairCost);
+                        outputItem.set(DataComponents.REPAIR_COST, repairCost);
                     }
 
                     PacketHandler.INSTANCE.sendToServer(new UpdateSlot(1, outputItem));

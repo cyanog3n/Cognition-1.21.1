@@ -6,8 +6,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 
-import java.util.Objects;
-
 public class ItemUtils {
 
     public static CompoundTag getCustomDataTag(ItemStack stack){
@@ -20,7 +18,7 @@ public class ItemUtils {
     }
 
     public static CompoundTag getBlockEntityTag(ItemStack stack){
-        return Objects.requireNonNull(stack.get(DataComponents.BLOCK_ENTITY_DATA)).copyTag();
+        return stack.getOrDefault(DataComponents.BLOCK_ENTITY_DATA, CustomData.EMPTY).copyTag();
     }
 
 }
