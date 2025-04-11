@@ -1,6 +1,5 @@
 package com.cyanogen.experienceobelisk.network.shared;
 
-import com.cyanogen.experienceobelisk.network.PacketHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.FriendlyByteBuf;

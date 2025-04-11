@@ -1,7 +1,6 @@
 package com.cyanogen.experienceobelisk.gui;
 
 import com.cyanogen.experienceobelisk.block_entities.ExperienceObeliskEntity;
-import com.cyanogen.experienceobelisk.network.PacketHandler;
 import com.cyanogen.experienceobelisk.network.experience_obelisk.UpdateContents;
 import com.cyanogen.experienceobelisk.utils.ExperienceUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -16,12 +15,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.cyanogen.experienceobelisk.network.experience_obelisk.UpdateContents.Request.*;
+import static com.cyanogen.experienceobelisk.network.experience_obelisk.UpdateContents.*;
 
 public class ExperienceObeliskScreen extends AbstractContainerScreen<ExperienceObeliskMenu> {
 
@@ -151,46 +151,46 @@ public class ExperienceObeliskScreen extends AbstractContainerScreen<ExperienceO
         //deposit
 
         Button deposit1 = Button.builder(Component.literal("+1").withStyle(ChatFormatting.GREEN),
-                        (onPress) -> PacketHandler.INSTANCE.sendToServer(new UpdateContents(pos, 1, FILL)))
+                        (onPress) -> PacketDistributor.sendToServer(new UpdateContents(pos, 1, FILL)))
                 .size(w,h)
-                .pos((int) (this.width / 2 - 1.5*w - s), this.height / 2 - y1)
+                .pos((int) (this.width / 2f - 1.5*w - s), this.height / 2 - y1)
                 .tooltip(Tooltip.create(Component.translatable("tooltip.experienceobelisk.experience_obelisk.add1")))
                 .build();
 
         Button deposit10 = Button.builder(Component.literal("+10").withStyle(ChatFormatting.GREEN),
-                        (onPress) -> PacketHandler.INSTANCE.sendToServer(new UpdateContents(pos, 10, FILL)))
+                        (onPress) -> PacketDistributor.sendToServer(new UpdateContents(pos, 10, FILL)))
                 .size(w,h)
                 .pos(this.width / 2 - w/2, this.height / 2 - y1)
                 .tooltip(Tooltip.create(Component.translatable("tooltip.experienceobelisk.experience_obelisk.add10")))
                 .build();
 
         Button depositAll = Button.builder(Component.literal("+All").withStyle(ChatFormatting.GREEN),
-                        (onPress) -> PacketHandler.INSTANCE.sendToServer(new UpdateContents(pos, 0, FILL_ALL)))
+                        (onPress) -> PacketDistributor.sendToServer(new UpdateContents(pos, 0, FILL_ALL)))
                 .size(w,h)
-                .pos((int) (this.width / 2 + 0.5*w + s), this.height / 2 - y1)
+                .pos((int) (this.width / 2f + 0.5*w + s), this.height / 2 - y1)
                 .tooltip(Tooltip.create(Component.translatable("tooltip.experienceobelisk.experience_obelisk.addAll")))
                 .build();
 
         //withdraw
 
         Button withdraw1 = Button.builder(Component.literal("-1").withStyle(ChatFormatting.RED),
-                        (onPress) -> PacketHandler.INSTANCE.sendToServer(new UpdateContents(pos, 1, DRAIN)))
+                        (onPress) -> PacketDistributor.sendToServer(new UpdateContents(pos, 1, DRAIN)))
                 .size(w,h)
-                .pos((int) (this.width / 2 - 1.5*w - s), this.height / 2 - y2)
+                .pos((int) (this.width / 2f - 1.5*w - s), this.height / 2 - y2)
                 .tooltip(Tooltip.create(Component.translatable("tooltip.experienceobelisk.experience_obelisk.drain1")))
                 .build();
 
         Button withdraw10 = Button.builder(Component.literal("-10").withStyle(ChatFormatting.RED),
-                        (onPress) -> PacketHandler.INSTANCE.sendToServer(new UpdateContents(pos, 10, DRAIN)))
+                        (onPress) -> PacketDistributor.sendToServer(new UpdateContents(pos, 10, DRAIN)))
                 .size(w,h)
                 .pos(this.width / 2 - w/2, this.height / 2 - y2)
                 .tooltip(Tooltip.create(Component.translatable("tooltip.experienceobelisk.experience_obelisk.drain10")))
                 .build();
 
         Button withdrawAll = Button.builder(Component.literal("-All").withStyle(ChatFormatting.RED),
-                        (onPress) -> PacketHandler.INSTANCE.sendToServer(new UpdateContents(pos, 0, DRAIN_ALL)))
+                        (onPress) -> PacketDistributor.sendToServer(new UpdateContents(pos, 0, DRAIN_ALL)))
                 .size(w,h)
-                .pos((int) (this.width / 2 + 0.5*w + s), this.height / 2 - y2)
+                .pos((int) (this.width / 2f + 0.5*w + s), this.height / 2 - y2)
                 .tooltip(Tooltip.create(Component.translatable("tooltip.experienceobelisk.experience_obelisk.drainAll")))
                 .build();
 

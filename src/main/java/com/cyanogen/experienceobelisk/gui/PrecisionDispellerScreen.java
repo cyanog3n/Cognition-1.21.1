@@ -1,11 +1,9 @@
 package com.cyanogen.experienceobelisk.gui;
 
 import com.cyanogen.experienceobelisk.block_entities.PrecisionDispellerEntity;
-import com.cyanogen.experienceobelisk.network.PacketHandler;
 import com.cyanogen.experienceobelisk.network.precision_dispeller.UpdateSlot;
 import com.cyanogen.experienceobelisk.utils.EnchantmentUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -26,7 +24,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
 
 import java.util.*;
 

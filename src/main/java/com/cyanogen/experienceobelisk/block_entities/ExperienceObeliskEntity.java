@@ -33,6 +33,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Objects;
 
 import static com.cyanogen.experienceobelisk.utils.ExperienceUtils.levelsToXP;
 import static com.cyanogen.experienceobelisk.utils.ExperienceUtils.xpToLevels;
@@ -339,12 +340,12 @@ public class ExperienceObeliskEntity extends BlockEntity implements GeoBlockEnti
         return levelsToXP(player.experienceLevel) + Math.round(player.experienceProgress * player.getXpNeededForNextLevel());
     }
 
-    public void handleRequest(UpdateContents.Request request, int XP, ServerPlayer sender){
+    public void handleRequest(String request, int XP, ServerPlayer sender){
 
         long playerXP = getTotalXP(sender);
         long finalXP;
 
-        if(request == UpdateContents.Request.FILL && this.getSpace() != 0){
+        if(Objects.equals(request, UpdateContents.FILL) && this.getSpace() != 0){
 
             //-----FILLING-----//
 
@@ -378,7 +379,7 @@ public class ExperienceObeliskEntity extends BlockEntity implements GeoBlockEnti
 
         //-----DRAINING-----//
 
-        else if(request == UpdateContents.Request.DRAIN){
+        else if(Objects.equals(request, UpdateContents.DRAIN)){
 
             int amount = this.getFluidAmount();
 
@@ -403,7 +404,7 @@ public class ExperienceObeliskEntity extends BlockEntity implements GeoBlockEnti
 
         //-----FILL OR DRAIN ALL-----//
 
-        else if(request == UpdateContents.Request.FILL_ALL){
+        else if(Objects.equals(request, UpdateContents.FILL_ALL)){
 
             if(playerXP * 20 <= this.getSpace()){
                 this.fill((int) (playerXP * 20));
@@ -416,7 +417,7 @@ public class ExperienceObeliskEntity extends BlockEntity implements GeoBlockEnti
             }
 
         }
-        else if(request == UpdateContents.Request.DRAIN_ALL){
+        else if(Objects.equals(request, UpdateContents.DRAIN_ALL)){
 
             sender.giveExperiencePoints(this.getFluidAmount() / 20);
             this.setFluid(0);

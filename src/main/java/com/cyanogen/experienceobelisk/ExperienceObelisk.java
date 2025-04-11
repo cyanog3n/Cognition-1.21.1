@@ -2,7 +2,6 @@ package com.cyanogen.experienceobelisk;
 
 import com.cyanogen.experienceobelisk.config.Config;
 import com.cyanogen.experienceobelisk.event.EventHandler;
-import com.cyanogen.experienceobelisk.network.PacketHandler;
 import com.cyanogen.experienceobelisk.registries.*;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -35,8 +34,6 @@ public class ExperienceObelisk
         RegisterMenus.register(eventBus);
         RegisterRecipes.register(eventBus);
         RegisterSounds.register(eventBus);
-
-        PacketHandler.init();
 
         NeoForge.EVENT_BUS.register(this);
     }

@@ -1,7 +1,6 @@
 package com.cyanogen.experienceobelisk.gui;
 
 import com.cyanogen.experienceobelisk.block_entities.MolecularMetamorpherEntity;
-import com.cyanogen.experienceobelisk.network.PacketHandler;
 import com.cyanogen.experienceobelisk.network.shared.UpdateRedstone;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
