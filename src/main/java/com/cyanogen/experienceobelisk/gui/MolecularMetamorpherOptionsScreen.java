@@ -13,6 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,9 +124,9 @@ public class MolecularMetamorpherOptionsScreen extends Screen{
         Button toggleRedstone = Button.builder(status,
                         (onPress) -> {
                             if (!metamorpher.isRedstoneEnabled()) {
-                                PacketHandler.INSTANCE.sendToServer(new UpdateRedstone(pos, true));
+                                PacketDistributor.sendToServer(new UpdateRedstone(pos, true));
                             } else {
-                                PacketHandler.INSTANCE.sendToServer(new UpdateRedstone(pos, false));
+                                PacketDistributor.sendToServer(new UpdateRedstone(pos, false));
                             }
                         })
                 .size(w, h)
