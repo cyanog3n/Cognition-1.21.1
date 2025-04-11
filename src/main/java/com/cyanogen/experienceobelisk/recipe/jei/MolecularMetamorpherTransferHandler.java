@@ -11,12 +11,16 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -186,7 +190,7 @@ public class MolecularMetamorpherTransferHandler implements IRecipeTransferHandl
         }
 
         //update player inventory and container
-        UpdateInventory.updateInventoryFromClient(player);
+        updateInventoryFromClient(player);
         return null;
     }
 
@@ -236,6 +240,25 @@ public class MolecularMetamorpherTransferHandler implements IRecipeTransferHandl
             }
         }
 
+    }
+
+    public void updateInventoryFromClient(Player player){
+        ListTag inventoryList = new ListTag();
+        player.getInventory().save(inventoryList);
+
+        ListTag containerList = new ListTag();
+        for (Slot slot : player.containerMenu.slots) {
+            CompoundTag tag = (CompoundTag) slot.getItem().saveOptional(player.level().registryAccess());
+            containerList.add(slot.index, tag);
+        }
+
+        CompoundTag inventoryTag = new CompoundTag();
+        inventoryTag.put("Inventory", inventoryList);
+
+        CompoundTag containerTag = new CompoundTag();
+        containerTag.put("Container", containerList);
+
+        PacketDistributor.sendToServer(new UpdateInventory(containerTag, inventoryTag));
     }
 
 }

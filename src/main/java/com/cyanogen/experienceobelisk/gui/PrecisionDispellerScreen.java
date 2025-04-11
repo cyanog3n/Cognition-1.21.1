@@ -18,12 +18,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.*;
 
@@ -355,7 +354,7 @@ public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionD
 
                 if(selectedIndex == selectablePanels.indexOf(panel)){
                     selectedIndex = -1;
-                    PacketHandler.INSTANCE.sendToServer(new UpdateSlot(1, ItemStack.EMPTY));
+                    PacketDistributor.sendToServer(new UpdateSlot(1, ItemStack.EMPTY));
                 }
                 else{
                     selectedIndex = selectablePanels.indexOf(panel);
@@ -366,12 +365,14 @@ public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionD
                     ItemStack outputItem;
 
                     if(inputItem.is(Items.ENCHANTED_BOOK)){
+
                         if(map.isEmpty()){
                             outputItem = new ItemStack(Items.BOOK, 1);
                         }
                         else{
+                            outputItem = new ItemStack(Items.ENCHANTED_BOOK, 1);
                             for(Map.Entry<Holder<Enchantment>,Integer> entry : map.entrySet()){
-                                outputItem = EnchantedBookItem.createForEnchantment(new EnchantmentInstance(entry.getKey(), entry.getValue()));
+                                outputItem.enchant(entry.getKey(), entry.getValue());
                             }
                         }
                     }
@@ -389,7 +390,7 @@ public class PrecisionDispellerScreen extends AbstractContainerScreen<PrecisionD
                         outputItem.set(DataComponents.REPAIR_COST, repairCost);
                     }
 
-                    PacketHandler.INSTANCE.sendToServer(new UpdateSlot(1, outputItem));
+                    PacketDistributor.sendToServer(new UpdateSlot(1, outputItem));
                 }
 
                 Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));

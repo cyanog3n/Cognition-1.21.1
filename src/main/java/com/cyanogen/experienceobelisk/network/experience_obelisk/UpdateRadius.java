@@ -36,7 +36,8 @@ public class UpdateRadius implements CustomPacketPayload {
             UpdateRadius::new
     );
 
-    public static final Type<UpdateRadius> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(ExperienceObelisk.MOD_ID, "experience_obelisk_update_radius"));
+    public static final Type<UpdateRadius> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(ExperienceObelisk.MOD_ID,
+            "experience_obelisk_update_radius"));
 
     public UpdateRadius(BlockPos pos, double changeInRadius) {
         this.posX = pos.getX();

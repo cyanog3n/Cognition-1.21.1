@@ -57,8 +57,7 @@ public class MolecularMetamorpherItem extends BlockItem implements GeoItem {
         CompoundTag inputs = ItemUtils.getBlockEntityTag(stack).getCompound("Inputs");
         CompoundTag outputs = ItemUtils.getBlockEntityTag(stack).getCompound("Outputs");
 
-        boolean isEmpty = inputs.getList("Items", 10).isEmpty() && outputs.getList("Items",10).isEmpty();
-        //Each itemstack is a compound, which has an ID of 10. See net.minecraft.nbt.Tag
+        boolean isEmpty = inputs.getList("Items", 9).isEmpty() && outputs.getList("Items",9).isEmpty();
 
         if(!isEmpty){
             tooltipComponents.add(Component.translatable("tooltip.experienceobelisk.molecular_metamorpher.has_contents"));

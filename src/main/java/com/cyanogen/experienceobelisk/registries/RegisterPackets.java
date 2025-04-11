@@ -2,6 +2,8 @@ package com.cyanogen.experienceobelisk.registries;
 
 import com.cyanogen.experienceobelisk.network.experience_obelisk.UpdateContents;
 import com.cyanogen.experienceobelisk.network.experience_obelisk.UpdateRadius;
+import com.cyanogen.experienceobelisk.network.precision_dispeller.UpdateSlot;
+import com.cyanogen.experienceobelisk.network.shared.UpdateInventory;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
@@ -18,6 +20,12 @@ public class RegisterPackets {
 
         registrar.playBidirectional(UpdateRadius.TYPE, UpdateRadius.STREAM_CODEC,
                 new DirectionalPayloadHandler<>(UpdateRadius::handleClient, UpdateRadius::handleServer));
+
+        registrar.playBidirectional(UpdateSlot.TYPE, UpdateSlot.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(UpdateSlot::handleClient, UpdateSlot::handleServer));
+
+        registrar.playBidirectional(UpdateInventory.TYPE, UpdateInventory.STREAM_CODEC,
+                new DirectionalPayloadHandler<>(UpdateInventory::handleClient, UpdateInventory::handleServer));
 
     }
 

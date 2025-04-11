@@ -44,7 +44,8 @@ public class UpdateContents implements CustomPacketPayload {
             UpdateContents::new
     );
 
-    public static final Type<UpdateContents> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(ExperienceObelisk.MOD_ID, "experience_obelisk_update_contents"));
+    public static final Type<UpdateContents> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(ExperienceObelisk.MOD_ID,
+            "experience_obelisk_update_contents"));
 
     public UpdateContents(BlockPos pos, int levels, String request) {
         this.posX = pos.getX();
