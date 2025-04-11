@@ -21,7 +21,6 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
@@ -42,7 +41,6 @@ import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.Optional;
 
 public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implements GeoBlockEntity {
@@ -219,7 +217,7 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
 
         if(getRecipe() != null){
             MolecularMetamorpherRecipe recipe = getRecipe();
-            ItemStack output = recipe.assemble(getSimpleContainer(), level == null ? null : level.registryAccess());
+            ItemStack output = recipe.assemble(getRecipeInput(), level == null ? null : level.registryAccess());
             int cost = recipe.getCost();
 
             if(canPerformRecipe(output, cost)){
@@ -407,18 +405,19 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
             }
         }
 
-        ArrayList<Tuple<Ingredient, Integer>> ingredients = MolecularMetamorpherRecipe.assembleIngredients(
-                Ingredient.of(inputItem.copy()), inputItem.getCount(),
-                Ingredient.of(nameTag.copy()), nameTag.getCount(),
-                Ingredient.of(formatStack.copy()), formatStack.getCount());
+        Ingredient ingredient1 = Ingredient.of(inputItem.copy());
+        int count1 = inputItem.getCount();
+        Ingredient ingredient2 = Ingredient.of(nameTag.copy());
+        int count2 = nameTag.getCount();
+        Ingredient ingredient3 = Ingredient.of(formatStack.copy());
+        int count3 = formatStack.getCount();
 
         ItemStack output = inputItem.copy();
         output.set(DataComponents.ITEM_NAME, name);
-
         int cost = 315;
         int processTime = 60;
 
-        return new MolecularMetamorpherRecipe(ingredients, output, cost, processTime,
+        return new MolecularMetamorpherRecipe(ingredient1, count1, ingredient2, count2, ingredient3, count3, output, cost, processTime,
                 ResourceLocation.fromNamespaceAndPath(ExperienceObelisk.MOD_ID, "item_name_formatting"));
     }
 
