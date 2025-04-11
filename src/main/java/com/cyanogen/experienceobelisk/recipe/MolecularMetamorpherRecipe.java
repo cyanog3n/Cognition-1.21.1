@@ -239,6 +239,7 @@ public class MolecularMetamorpherRecipe implements Recipe<RecipeInput> {
         }
 
         //todo: change all metamorpher recipes to include ID fields
+        //workaround for now until I find a way to pass the path of whatever file is being parsed into the codec
 
         private static final MapCodec<MolecularMetamorpherRecipe> CODEC =
                 RecordCodecBuilder.mapCodec((recipeInstance) -> recipeInstance.group(

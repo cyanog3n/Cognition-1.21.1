@@ -1,7 +1,7 @@
 {
   "type": "experienceobelisk:molecular_metamorphosis",
   "ingredient1": {
-    "tag": "minecraft:wool"
+    "item": "minecraft:dried_kelp"
   },
   "count1": 1,
   "ingredient2": {
@@ -11,9 +11,10 @@
   "ingredient3": [],
   "count3": 0,
   "result": {
-    "item": "minecraft:feather",
-    "count": 4
+    "item": "minecraft:leather",
+    "count": 1
   },
   "cost": 16,
-  "processTime": 20
+  "processTime": 20,
+  "id": "experienceobelisk:leather_metamorphosis"
 }
