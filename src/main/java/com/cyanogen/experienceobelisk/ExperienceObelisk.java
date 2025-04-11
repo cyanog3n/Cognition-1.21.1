@@ -2,6 +2,7 @@ package com.cyanogen.experienceobelisk;
 
 import com.cyanogen.experienceobelisk.config.Config;
 import com.cyanogen.experienceobelisk.event.EventHandler;
+import com.cyanogen.experienceobelisk.event.IModBusEventHandler;
 import com.cyanogen.experienceobelisk.registries.*;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -14,14 +15,13 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
 @Mod(ExperienceObelisk.MOD_ID)
-
 public class ExperienceObelisk
 {
     public static final String MOD_ID = "experienceobelisk";
 
     public ExperienceObelisk(IEventBus eventBus, ModContainer modContainer) {
 
-        eventBus.addListener(this::setup);
+        eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::clientSetup);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.COMMON_SPEC);
@@ -35,11 +35,11 @@ public class ExperienceObelisk
         RegisterRecipes.register(eventBus);
         RegisterSounds.register(eventBus);
 
-        NeoForge.EVENT_BUS.register(this);
+        eventBus.register(new IModBusEventHandler()); //for events implementing IModBusEvent
     }
 
-    private void setup(final FMLCommonSetupEvent event) {
-        NeoForge.EVENT_BUS.register(new EventHandler());
+    private void commonSetup(final FMLCommonSetupEvent event) {
+        NeoForge.EVENT_BUS.register(new EventHandler()); //for other events
     }
 
     private void clientSetup(final FMLClientSetupEvent event){

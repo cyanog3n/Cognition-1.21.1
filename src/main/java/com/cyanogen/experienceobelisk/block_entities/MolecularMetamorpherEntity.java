@@ -15,9 +15,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -450,7 +447,6 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
         };
     }
 
-    @Deprecated
     public SimpleContainer getSimpleContainer(){
         SimpleContainer container = new SimpleContainer(3);
         container.setItem(0, inputHandler.getStackInSlot(0).copy());
@@ -590,12 +586,6 @@ public class MolecularMetamorpherEntity extends ExperienceReceivingEntity implem
         }
 
         return tag;
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket()
-    {
-        return ClientboundBlockEntityDataPacket.create(this);
     }
 
 }
