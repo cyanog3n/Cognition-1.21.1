@@ -23,7 +23,7 @@ public class UpdateContents implements CustomPacketPayload {
     public final int posX;
     public final int posY;
     public final int posZ;
-    public final int XP;
+    public final int levels;
     public final String request;
     public static final String FILL = "FILL";
     public static final String FILL_ALL = "FILL_ALL";
@@ -38,7 +38,7 @@ public class UpdateContents implements CustomPacketPayload {
             ByteBufCodecs.VAR_INT,
             UpdateContents::getPosZ,
             ByteBufCodecs.VAR_INT,
-            UpdateContents::getXP,
+            UpdateContents::getLevels,
             ByteBufCodecs.STRING_UTF8,
             UpdateContents::getRequest,
             UpdateContents::new
@@ -46,19 +46,19 @@ public class UpdateContents implements CustomPacketPayload {
 
     public static final Type<UpdateContents> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(ExperienceObelisk.MOD_ID, "experience_obelisk_update_contents"));
 
-    public UpdateContents(BlockPos pos, int XP, String request) {
+    public UpdateContents(BlockPos pos, int levels, String request) {
         this.posX = pos.getX();
         this.posY = pos.getY();
         this.posZ = pos.getZ();
-        this.XP = XP;
+        this.levels = levels;
         this.request = request;
     }
 
-    public UpdateContents(int posX, int posY, int posZ, int XP, String request) {
+    public UpdateContents(int posX, int posY, int posZ, int levels, String request) {
         this.posX = posX;
         this.posY = posY;
         this.posZ = posZ;
-        this.XP = XP;
+        this.levels = levels;
         this.request = request;
     }
 
@@ -79,8 +79,8 @@ public class UpdateContents implements CustomPacketPayload {
         return posZ;
     }
 
-    public int getXP() {
-        return XP;
+    public int getLevels() {
+        return levels;
     }
 
     public String getRequest() {
@@ -100,7 +100,7 @@ public class UpdateContents implements CustomPacketPayload {
                 BlockEntity entity = player.level().getBlockEntity(new BlockPos(packet.posX, packet.posY, packet.posZ));
 
                 if(entity instanceof ExperienceObeliskEntity obelisk){
-                    obelisk.handleRequest(packet.request, packet.XP, player);
+                    obelisk.handleRequest(packet.request, packet.levels, player);
 
                 }
             }

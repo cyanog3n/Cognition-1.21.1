@@ -15,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -128,20 +129,20 @@ public class ExperienceObeliskOptionsScreen extends Screen {
                 .build();
 
         Button decreaseRadius = Button.builder(Component.literal("-").setStyle(red),
-                        (onPress) -> PacketHandler.INSTANCE.sendToServer(new UpdateRadius(pos, -0.5)))
+                        (onPress) -> PacketDistributor.sendToServer(new UpdateRadius(pos, -0.5)))
                 .size(26, h)
                 .pos(this.width / 2 - 56, this.height / 2 - y1)
                 .build();
 
         Button resetRadius = Button.builder(Component.literal(String.valueOf(radius)),
-                        (onPress) -> PacketHandler.INSTANCE.sendToServer(new UpdateRadius(pos, 0)))
+                        (onPress) -> PacketDistributor.sendToServer(new UpdateRadius(pos, 0)))
                 .size(50, h)
                 .pos(this.width / 2 - 25, this.height / 2 - y1)
                 .tooltip(Tooltip.create(Component.translatable("tooltip.experienceobelisk.experience_obelisk.radius")))
                 .build();
 
         Button increaseRadius = Button.builder(Component.literal("+").setStyle(green),
-                        (onPress) -> PacketHandler.INSTANCE.sendToServer(new UpdateRadius(pos, 0.5)))
+                        (onPress) -> PacketDistributor.sendToServer(new UpdateRadius(pos, 0.5)))
                 .size(26, h)
                 .pos(this.width / 2 + 30, this.height / 2 - y1)
                 .build();
@@ -149,9 +150,9 @@ public class ExperienceObeliskOptionsScreen extends Screen {
         Button toggleRedstone = Button.builder(status,
                         (onPress) -> {
                             if (!xpobelisk.isRedstoneEnabled()) {
-                                PacketHandler.INSTANCE.sendToServer(new UpdateRedstone(pos, true));
+                                PacketDistributor.sendToServer(new UpdateRedstone(pos, true));
                             } else {
-                                PacketHandler.INSTANCE.sendToServer(new UpdateRedstone(pos, false));
+                                PacketDistributor.sendToServer(new UpdateRedstone(pos, false));
                             }
                         })
                 .size(w, h)

@@ -340,7 +340,7 @@ public class ExperienceObeliskEntity extends BlockEntity implements GeoBlockEnti
         return levelsToXP(player.experienceLevel) + Math.round(player.experienceProgress * player.getXpNeededForNextLevel());
     }
 
-    public void handleRequest(String request, int XP, ServerPlayer sender){
+    public void handleRequest(String request, int levels, ServerPlayer sender){
 
         long playerXP = getTotalXP(sender);
         long finalXP;
@@ -350,21 +350,20 @@ public class ExperienceObeliskEntity extends BlockEntity implements GeoBlockEnti
             //-----FILLING-----//
 
             //final amount of experience points the player will have after storing n levels
-            finalXP = levelsToXP(sender.experienceLevel - XP) + Math.round(sender.experienceProgress *
-                    (levelsToXP(sender.experienceLevel - XP + 1) - levelsToXP(sender.experienceLevel - XP)));
+            finalXP = levelsToXP(sender.experienceLevel - levels) + Math.round(sender.experienceProgress *
+                    (levelsToXP(sender.experienceLevel - levels + 1) - levelsToXP(sender.experienceLevel - levels)));
 
             long addAmount = (playerXP - finalXP) * 20;
 
             //if amount to add exceeds remaining capacity
-            if(addAmount >= this.getSpace()){
+            if(sender.experienceLevel >= levels && addAmount >= this.getSpace()){
                 sender.giveExperiencePoints(-this.fill(this.getSpace()) / 20); //fill up however much is left and deduct that amount frm player
             }
-
             //normal operation
-            else if(sender.experienceLevel >= XP){
+            else if(sender.experienceLevel >= levels){
 
                 this.fill((int) (addAmount));
-                sender.giveExperienceLevels(-XP);
+                sender.giveExperienceLevels(-levels);
 
             }
             //if player has less than the required XP
@@ -383,8 +382,8 @@ public class ExperienceObeliskEntity extends BlockEntity implements GeoBlockEnti
 
             int amount = this.getFluidAmount();
 
-            finalXP = levelsToXP(sender.experienceLevel + XP) + Math.round(sender.experienceProgress *
-                    (levelsToXP(sender.experienceLevel + XP + 1) - levelsToXP(sender.experienceLevel + XP)));
+            finalXP = levelsToXP(sender.experienceLevel + levels) + Math.round(sender.experienceProgress *
+                    (levelsToXP(sender.experienceLevel + levels + 1) - levelsToXP(sender.experienceLevel + levels)));
 
             long drainAmount = (finalXP - playerXP) * 20;
 
@@ -392,7 +391,7 @@ public class ExperienceObeliskEntity extends BlockEntity implements GeoBlockEnti
             if(amount >= drainAmount){
 
                 this.drain((int) drainAmount);
-                sender.giveExperienceLevels(XP);
+                sender.giveExperienceLevels(levels);
 
             }
             else if(amount >= 1){
