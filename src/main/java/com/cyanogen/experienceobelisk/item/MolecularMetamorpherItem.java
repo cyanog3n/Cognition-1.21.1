@@ -1,6 +1,8 @@
 package com.cyanogen.experienceobelisk.item;
 
+import com.cyanogen.experienceobelisk.renderer.MolecularMetamorpherItemRenderer;
 import com.cyanogen.experienceobelisk.utils.ItemUtils;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
@@ -8,11 +10,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.block.Block;
 import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class MolecularMetamorpherItem extends BlockItem implements GeoItem {
 
@@ -47,6 +51,19 @@ public class MolecularMetamorpherItem extends BlockItem implements GeoItem {
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
+    }
+
+    @Override
+    public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
+
+        consumer.accept(new GeoRenderProvider() {
+            private final BlockEntityWithoutLevelRenderer renderer = new MolecularMetamorpherItemRenderer();
+
+            @Override
+            public BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
+                return renderer;
+            }
+        });
     }
 
     //-----CUSTOM HOVER TEXT-----//
